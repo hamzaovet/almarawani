@@ -70,6 +70,9 @@ export async function POST(req: Request) {
         isOffer: Boolean(data.isOffer),
         isExpress: data.isExpress !== undefined ? Boolean(data.isExpress) : true,
         isWeighted: Boolean(data.isWeighted),
+        scaleItemCode: data.scaleItemCode || null,
+        shelfLifeDays: data.shelfLifeDays !== undefined ? parseInt(data.scaleShelfLifeDays || data.shelfLifeDays || 3) : 3,
+        scaleTareWeight: data.scaleTareWeight !== undefined ? parseFloat(data.scaleTareWeight || 0) : 0,
         inStock: data.inStock !== undefined ? Boolean(data.inStock) : true,
         stockQty,
         minStockQty: data.minStockQty ? parseInt(data.minStockQty) : 15,
@@ -126,6 +129,9 @@ export async function PUT(req: Request) {
     if (data.isOffer !== undefined) updateData.isOffer = Boolean(data.isOffer);
     if (data.isExpress !== undefined) updateData.isExpress = Boolean(data.isExpress);
     if (data.isWeighted !== undefined) updateData.isWeighted = Boolean(data.isWeighted);
+    if (data.scaleItemCode !== undefined) updateData.scaleItemCode = data.scaleItemCode || null;
+    if (data.shelfLifeDays !== undefined) updateData.shelfLifeDays = parseInt(data.shelfLifeDays || 3);
+    if (data.scaleTareWeight !== undefined) updateData.scaleTareWeight = parseFloat(data.scaleTareWeight || 0);
     if (data.inStock !== undefined) updateData.inStock = Boolean(data.inStock);
     if (data.minStockQty !== undefined) updateData.minStockQty = parseInt(data.minStockQty);
     if (data.image !== undefined) updateData.image = data.image;

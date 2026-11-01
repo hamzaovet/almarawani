@@ -43,7 +43,12 @@ import {
   Calendar,
   Search,
   Filter,
+  Scale,
+  Barcode,
+  Download,
+  RotateCcw,
 } from "lucide-react";
+import { parseScaleBarcode, validateEan13 } from "@/lib/barcode";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -52,6 +57,7 @@ export default function DashboardPage() {
   // Active Main Tab
   const [activeTab, setActiveTab] = useState<
     | "orders"
+    | "sales"
     | "products"
     | "inventory"
     | "purchases"
@@ -65,6 +71,7 @@ export default function DashboardPage() {
 
   // Core Data Lists
   const [orders, setOrders] = useState<any[]>([]);
+  const [returnsList, setReturnsList] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [captains, setCaptains] = useState<any[]>([]);
@@ -130,10 +137,28 @@ export default function DashboardPage() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUserStaff, setEditingUserStaff] = useState<any | null>(null);
 
+  // Returns Management State
+  const [showReturnModal, setShowReturnModal] = useState(false);
+  const [returnForm, setReturnForm] = useState({
+    type: "sales_return", // "sales_return" | "purchase_return"
+    referenceNumber: "",
+    customerOrSupplier: "",
+    supplierId: "",
+    items: [{ productId: "", nameAr: "", qty: 1, price: 0, total: 0 }],
+    totalAmount: 0,
+    reason: "",
+    refundMethod: "cash",
+  });
+
+  // Scale Barcode Tester State
+  const [barcodeTestInput, setBarcodeTestInput] = useState("");
+  const [barcodeTestResult, setBarcodeTestResult] = useState<any | null>(null);
+
   // Filters
   const [productCatFilter, setProductCatFilter] = useState("الكل");
   const [productSearch, setProductSearch] = useState("");
   const [orderStatusFilter, setOrderStatusFilter] = useState("all");
+  const [orderChannelFilter, setOrderChannelFilter] = useState<"delivery" | "pos" | "all">("delivery");
 
   // Check auth
   useEffect(() => {
@@ -167,6 +192,7 @@ export default function DashboardPage() {
         treRes,
         usersRes,
         settRes,
+        retRes,
       ] = await Promise.all([
         fetch("/api/orders"),
         fetch("/api/products?all=true"),
@@ -180,6 +206,7 @@ export default function DashboardPage() {
         fetch("/api/treasury"),
         fetch("/api/auth/users"),
         fetch("/api/settings"),
+        fetch("/api/returns"),
       ]);
 
       const [
@@ -195,6 +222,7 @@ export default function DashboardPage() {
         treData,
         usersData,
         settData,
+        retData,
       ] = await Promise.all([
         ordRes.json(),
         prodRes.json(),
@@ -208,6 +236,7 @@ export default function DashboardPage() {
         treRes.json(),
         usersRes.json(),
         settRes.json(),
+        retRes.json(),
       ]);
 
       if (ordData.success) setOrders(ordData.orders);
@@ -222,6 +251,7 @@ export default function DashboardPage() {
       if (treData.success) setTreasuryData(treData);
       if (usersData.success) setUsersList(usersData.users);
       if (settData.success) setSettings(settData.settings);
+      if (retData.success) setReturnsList(retData.returns);
     } catch (err) {
       console.error("Dashboard data load error:", err);
     } finally {
@@ -268,6 +298,86 @@ export default function DashboardPage() {
     } catch {
       alert("حدث خطأ أثناء تحديث حالة الطلب");
     }
+  };
+
+  // --- CAPTAIN CASH SETTLEMENT ---
+  const handleSettleCaptain = async (captainId: string) => {
+    if (!confirm("هل تريد تسوية عهدة الطيار وتوريد المبالغ النقدية المعلقة إلى الخزينة؟")) return;
+    try {
+      const res = await fetch("/api/orders", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ settleCaptainId: captainId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showNotification(`تمت تسوية ${data.settledCount} طلب بمبلغ ${data.settledAmount.toFixed(2)} ج.م وتوريدها للخزينة`);
+        loadData();
+      } else {
+        alert("فشلت التسوية: " + data.error);
+      }
+    } catch {
+      alert("حدث خطأ أثناء تسوية عهدة الطيار");
+    }
+  };
+
+  // --- RETURNS MANAGEMENT ---
+  const handleCreateReturn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!returnForm.referenceNumber || returnForm.items.length === 0) {
+      alert("يرجى إدخال رقم الفاتورة واختيار صنف واحد على الأقل");
+      return;
+    }
+    try {
+      const res = await fetch("/api/returns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...returnForm,
+          recordedBy: user?.name || "الإدارة",
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showNotification(`تم إصدار المرتجع بنجاح برقم ${data.returnRecord.returnNumber}`);
+        setShowReturnModal(false);
+        setReturnForm({
+          type: "sales_return",
+          referenceNumber: "",
+          customerOrSupplier: "",
+          supplierId: "",
+          items: [{ productId: "", nameAr: "", qty: 1, price: 0, total: 0 }],
+          totalAmount: 0,
+          reason: "",
+          refundMethod: "cash",
+        });
+        loadData();
+      } else {
+        alert("فشل تسجيل المرتجع: " + data.error);
+      }
+    } catch {
+      alert("حدث خطأ أثناء حفظ المرتجع");
+    }
+  };
+
+  // --- SCALE BARCODE TESTER ---
+  const handleTestBarcode = (e: React.FormEvent) => {
+    e.preventDefault();
+    const barcode = barcodeTestInput.trim();
+    if (!barcode) return;
+    const parsed = parseScaleBarcode(barcode, {
+      weightPrefixes: settings?.weightPrefixes || "20,21",
+      pricePrefixes: settings?.pricePrefixes || "22,23",
+      pluDigits: settings?.pluDigits || 5,
+    });
+    const isValid = validateEan13(barcode);
+    let matchedProduct: any = null;
+    if (parsed.plu) {
+      matchedProduct = products.find(
+        (p) => p.scaleItemCode === parsed.plu || p.barcode === parsed.plu
+      );
+    }
+    setBarcodeTestResult({ ...parsed, isValid, matchedProduct });
   };
 
   // --- PRODUCT MANAGEMENT ---
@@ -754,6 +864,14 @@ export default function DashboardPage() {
               <span>نقطة الكاشير (POS)</span>
             </Link>
 
+            <Link
+              href="/scale"
+              className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-xs font-bold text-white flex items-center gap-1.5 shadow-xs"
+            >
+              <Scale className="w-3.5 h-3.5" />
+              <span>محطة الميزان ⚖️</span>
+            </Link>
+
             <div className="h-6 w-px bg-blue-800/80 mx-1 hidden sm:block" />
 
             <div className="flex items-center gap-2 text-right">
@@ -847,16 +965,17 @@ export default function DashboardPage() {
         {/* Navigation Tabs Bar */}
         <div className="bg-white rounded-2xl p-2 border border-slate-200 shadow-xs flex flex-wrap gap-1.5 overflow-x-auto">
           {[
-            { id: "orders", label: "الطلبات الحية", icon: ShoppingBag, count: orders.length },
+            { id: "orders", label: "طلبات الدليفري الحية", icon: Bike, count: orders.filter(o => o.orderType === "delivery" && o.status !== "delivered").length },
+            { id: "sales", label: "المبيعات والمرتجعات", icon: TrendingUp, count: returnsList.length ? `🔄 ${returnsList.length}` : undefined },
             { id: "products", label: "الأصناف والأقسام", icon: Package, count: products.length },
             { id: "inventory", label: "المخازن وكارت الصنف", icon: Warehouse, count: lowStockCount ? `⚠️ ${lowStockCount}` : undefined },
             { id: "purchases", label: "فواتير المشتريات", icon: FileText, count: purchases.length },
             { id: "suppliers", label: "الموردين والشركات", icon: Building2, count: suppliers.length },
             { id: "customers", label: "قاعدة العملاء", icon: UserCheck, count: customers.length },
-            { id: "captains", label: "أسطول الطيارين والمناطق", icon: Bike, count: captains.length },
+            { id: "captains", label: "أسطول الطيارين والمناطق", icon: ShoppingBag, count: captains.length },
             { id: "treasury", label: "الخزينة والمصروفات", icon: CreditCard },
             { id: "users", label: "الموظفين وأكواد الـ PIN", icon: Users, count: usersList.length },
-            { id: "settings", label: "إعدادات الفرع", icon: Settings },
+            { id: "settings", label: "إعدادات الفرع والميزان", icon: Settings },
           ].map((tab) => {
             const Icon = tab.icon;
             const active = activeTab === tab.id;
@@ -902,27 +1021,62 @@ export default function DashboardPage() {
                 </p>
               </div>
 
-              {/* Status filter */}
-              <div className="flex gap-1.5">
-                {[
-                  { id: "all", label: "الكل" },
-                  { id: "new", label: "جديدة" },
-                  { id: "preparing", label: "تجهيز" },
-                  { id: "out_for_delivery", label: "مع الطيار" },
-                  { id: "delivered", label: "تم التوصيل" },
-                ].map((st) => (
+              {/* Channel and Status filter */}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex bg-slate-100 p-1 rounded-xl gap-1">
                   <button
-                    key={st.id}
-                    onClick={() => setOrderStatusFilter(st.id)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                      orderStatusFilter === st.id
-                        ? "bg-[#004f9f] text-white"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    onClick={() => setOrderChannelFilter("delivery")}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                      orderChannelFilter === "delivery"
+                        ? "bg-white text-[#004f9f] shadow-xs"
+                        : "text-slate-600 hover:text-slate-900"
                     }`}
                   >
-                    {st.label}
+                    طلبات الدليفري 🛵
                   </button>
-                ))}
+                  <button
+                    onClick={() => setOrderChannelFilter("pos")}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                      orderChannelFilter === "pos"
+                        ? "bg-white text-[#004f9f] shadow-xs"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    مبيعات الكاشير 🖥️
+                  </button>
+                  <button
+                    onClick={() => setOrderChannelFilter("all")}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                      orderChannelFilter === "all"
+                        ? "bg-white text-[#004f9f] shadow-xs"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    الكل 📋
+                  </button>
+                </div>
+
+                <div className="flex gap-1">
+                  {[
+                    { id: "all", label: "الكل" },
+                    { id: "new", label: "جديدة" },
+                    { id: "preparing", label: "تجهيز" },
+                    { id: "out_for_delivery", label: "مع الطيار" },
+                    { id: "delivered", label: "تم التوصيل" },
+                  ].map((st) => (
+                    <button
+                      key={st.id}
+                      onClick={() => setOrderStatusFilter(st.id)}
+                      className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all ${
+                        orderStatusFilter === st.id
+                          ? "bg-[#004f9f] text-white"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      }`}
+                    >
+                      {st.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -932,6 +1086,7 @@ export default function DashboardPage() {
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-black">
                     <th className="p-3">رقم الطلب</th>
+                    <th className="p-3">النوع والقناة</th>
                     <th className="p-3">العميل والهاتف</th>
                     <th className="p-3">العنوان والمنطقة</th>
                     <th className="p-3">الأصناف</th>
@@ -943,7 +1098,12 @@ export default function DashboardPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {orders
-                    .filter((o) => (orderStatusFilter === "all" ? true : o.status === orderStatusFilter))
+                    .filter((o) => {
+                      if (orderChannelFilter === "delivery" && o.orderType && o.orderType !== "delivery") return false;
+                      if (orderChannelFilter === "pos" && o.orderType !== "pos") return false;
+                      if (orderStatusFilter !== "all" && o.status !== orderStatusFilter) return false;
+                      return true;
+                    })
                     .map((ord) => {
                       let parsedItems: any[] = [];
                       try {
@@ -954,6 +1114,17 @@ export default function DashboardPage() {
                         <tr key={ord.id} className="hover:bg-slate-50/80 transition-colors">
                           <td className="p-3 font-mono font-black text-[#004f9f]">
                             {ord.orderNumber}
+                          </td>
+                          <td className="p-3">
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                                ord.orderType === "pos"
+                                  ? "bg-emerald-100 text-emerald-800"
+                                  : "bg-blue-100 text-blue-800"
+                              }`}
+                            >
+                              {ord.orderType === "pos" ? "كاشير مباشر 🖥️" : "دليفري 🛵"}
+                            </span>
                           </td>
                           <td className="p-3">
                             <p className="font-bold text-slate-900">{ord.customerName}</p>
@@ -1049,6 +1220,297 @@ export default function DashboardPage() {
                   لا توجد طلبات مسجلة حالياً
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* TAB: SALES, CHANNELS, CAPTAINS RECONCILIATION & RETURNS */}
+        {/* ======================================================== */}
+        {activeTab === "sales" && (
+          <div className="space-y-6">
+            {/* Sales Header */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-[#004f9f]" />
+                  <span>لوحة المبيعات، تحليلات القنوات، وتسوية الطيارين والمرتجعات</span>
+                </h2>
+                <p className="text-xs text-slate-500">
+                  فصل دقيق بين مبيعات المحل المباشرة وطلبات الدليفري، جرد عهد الطيارين، وتسجيل المرتجعات
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setReturnForm({
+                      type: "sales_return",
+                      referenceNumber: "",
+                      customerOrSupplier: "",
+                      supplierId: "",
+                      items: [{ productId: products[0]?.id || "", nameAr: products[0]?.nameAr || "", qty: 1, price: products[0]?.basePrice || 0, total: products[0]?.basePrice || 0 }],
+                      totalAmount: products[0]?.basePrice || 0,
+                      reason: "طلب العميل / صنف تالف",
+                      refundMethod: "cash",
+                    });
+                    setShowReturnModal(true);
+                  }}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-black shadow flex items-center gap-1.5 transition-all"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>تسجيل مرتجع جديد (عميل / مورد)</span>
+                </button>
+
+                <Link
+                  href="/cashier"
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow flex items-center gap-1.5 transition-all"
+                >
+                  <Receipt className="w-4 h-4" />
+                  <span>شاشة الكاشير (POS)</span>
+                </Link>
+
+                <Link
+                  href="/scale"
+                  className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-black shadow flex items-center gap-1.5 transition-all"
+                >
+                  <Scale className="w-4 h-4" />
+                  <span>محطة الميزان ⚖️</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Channels Sales KPI Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* POS Sales */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-slate-500">مبيعات الكاشير المباشرة (POS)</span>
+                  <span className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                    🖥️
+                  </span>
+                </div>
+                <div className="text-2xl font-black font-mono text-emerald-600">
+                  {orders
+                    .filter((o) => o.orderType === "pos")
+                    .reduce((sum, o) => sum + (o.total || 0), 0)
+                    .toLocaleString()}{" "}
+                  <span className="text-xs font-sans text-slate-500">ج.م</span>
+                </div>
+                <div className="text-[11px] text-slate-400 mt-1">
+                  عدد الفواتير: <strong>{orders.filter((o) => o.orderType === "pos").length}</strong> • موردة فورياً للخزينة
+                </div>
+              </div>
+
+              {/* Delivery Sales */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-slate-500">مبيعات الدليفري والتوصيل (Online)</span>
+                  <span className="w-8 h-8 rounded-lg bg-blue-50 text-[#004f9f] flex items-center justify-center font-bold">
+                    🛵
+                  </span>
+                </div>
+                <div className="text-2xl font-black font-mono text-[#004f9f]">
+                  {orders
+                    .filter((o) => o.orderType === "delivery" || !o.orderType)
+                    .reduce((sum, o) => sum + (o.total || 0), 0)
+                    .toLocaleString()}{" "}
+                  <span className="text-xs font-sans text-slate-500">ج.م</span>
+                </div>
+                <div className="text-[11px] text-slate-400 mt-1">
+                  عدد الطلبات: <strong>{orders.filter((o) => o.orderType === "delivery" || !o.orderType).length}</strong> • فرع المعادي
+                </div>
+              </div>
+
+              {/* Uncollected Cash with Captains */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-slate-500">نقدية معلقة مع الطيارين (عهدة)</span>
+                  <span className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                    💰
+                  </span>
+                </div>
+                <div className="text-2xl font-black font-mono text-amber-600">
+                  {captains
+                    .reduce((sum, c) => sum + (c.pendingBalance || 0), 0)
+                    .toLocaleString()}{" "}
+                  <span className="text-xs font-sans text-slate-500">ج.م</span>
+                </div>
+                <div className="text-[11px] text-amber-600 font-bold mt-1">
+                  جاهزة للتسوية الفورية وتوريدها للخزينة
+                </div>
+              </div>
+
+              {/* Total Returns */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-slate-500">إجمالي المرتجعات المستردة</span>
+                  <span className="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center font-bold">
+                    🔄
+                  </span>
+                </div>
+                <div className="text-2xl font-black font-mono text-red-600">
+                  {returnsList
+                    .reduce((sum, r) => sum + (r.totalAmount || 0), 0)
+                    .toLocaleString()}{" "}
+                  <span className="text-xs font-sans text-slate-500">ج.م</span>
+                </div>
+                <div className="text-[11px] text-slate-400 mt-1">
+                  عدد حركات المرتجع: <strong>{returnsList.length}</strong> حركة
+                </div>
+              </div>
+            </div>
+
+            {/* Delivery Captains Cash Reconciliation Table */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-black">
+                    <Bike className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-sm text-slate-900">
+                      تسوية وجرد عهدة طياري الدليفري المعلقة
+                    </h3>
+                    <p className="text-[11px] text-slate-500">
+                      متابعة تحصيل قيمة الطلبات المسلمة وتوريدها للخزينة دفعة واحدة
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-right text-xs">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-black">
+                      <th className="p-3">اسم الطيار</th>
+                      <th className="p-3">رقم الهاتف</th>
+                      <th className="p-3">المركبة</th>
+                      <th className="p-3">طلبات مسلمة غير موردة</th>
+                      <th className="p-3">المبلغ النقدي المعلق</th>
+                      <th className="p-3">الإجراء</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {captains.map((cap) => {
+                      const unsettledCount = orders.filter(
+                        (o) => o.captainId === cap.id && o.status === "delivered" && !o.isSettled
+                      ).length;
+                      const hasPending = (cap.pendingBalance || 0) > 0 || unsettledCount > 0;
+
+                      return (
+                        <tr key={cap.id} className="hover:bg-slate-50">
+                          <td className="p-3 font-bold text-slate-900">{cap.name}</td>
+                          <td className="p-3 font-mono text-slate-600">{cap.phone}</td>
+                          <td className="p-3 text-slate-500">{cap.vehicle}</td>
+                          <td className="p-3 font-mono font-bold">
+                            <span className={`px-2 py-0.5 rounded-full ${unsettledCount > 0 ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-600"}`}>
+                              {unsettledCount} طلبات
+                            </span>
+                          </td>
+                          <td className="p-3 font-mono font-black text-sm">
+                            <span className={hasPending ? "text-amber-600" : "text-slate-400"}>
+                              {(cap.pendingBalance || 0).toFixed(2)} ج.م
+                            </span>
+                          </td>
+                          <td className="p-3">
+                            <button
+                              onClick={() => handleSettleCaptain(cap.id)}
+                              disabled={!hasPending}
+                              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1 transition-all"
+                            >
+                              <DollarSign className="w-3.5 h-3.5" />
+                              <span>توريد للخزينة 💵</span>
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Returns Log (سجل المرتجعات المالية والمخزنية) */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-red-100 text-red-800 flex items-center justify-center font-black">
+                    <RotateCcw className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-sm text-slate-900">
+                      سجل المرتجعات المالية وحركات المخزن المسترجعة
+                    </h3>
+                    <p className="text-[11px] text-slate-500">
+                      توثيق كافة مرتجعات المبيعات (من العملاء) ومرتجعات المشتريات (للموردين) وتأثيرها على الخزينة
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-right text-xs">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-black">
+                      <th className="p-3">رقم المرتجع</th>
+                      <th className="p-3">النوع</th>
+                      <th className="p-3">رقم الفاتورة الأصلية</th>
+                      <th className="p-3">اسم العميل / المورد</th>
+                      <th className="p-3">الأصناف المرتجعة</th>
+                      <th className="p-3">المبلغ المسترد</th>
+                      <th className="p-3">السبب</th>
+                      <th className="p-3">الموظف المنفذ</th>
+                      <th className="p-3">التاريخ والوقت</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {returnsList.map((ret) => {
+                      let parsedRetItems: any[] = [];
+                      try {
+                        parsedRetItems = JSON.parse(ret.items);
+                      } catch {}
+
+                      return (
+                        <tr key={ret.id} className="hover:bg-slate-50">
+                          <td className="p-3 font-mono font-black text-red-600">{ret.returnNumber}</td>
+                          <td className="p-3">
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                                ret.type === "sales_return"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-blue-100 text-blue-800"
+                              }`}
+                            >
+                              {ret.type === "sales_return" ? "مرتجع مبيعات عميل" : "مرتجع مشتريات مورد"}
+                            </span>
+                          </td>
+                          <td className="p-3 font-mono font-bold text-slate-700">{ret.referenceNumber}</td>
+                          <td className="p-3 font-bold text-slate-900">{ret.customerOrSupplier}</td>
+                          <td className="p-3 max-w-xs">
+                            <span className="text-[11px] text-slate-600">
+                              {parsedRetItems.map((i: any) => `${i.nameAr || "صنف"} (${i.qty})`).join("، ")}
+                            </span>
+                          </td>
+                          <td className="p-3 font-mono font-black text-sm text-red-600">
+                            {ret.totalAmount.toFixed(2)} ج.م
+                          </td>
+                          <td className="p-3 text-slate-500">{ret.reason || "—"}</td>
+                          <td className="p-3 text-slate-700">{ret.recordedBy || "كاشير"}</td>
+                          <td className="p-3 font-mono text-[11px] text-slate-400">
+                            {new Date(ret.createdAt).toLocaleString("ar-EG")}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                {returnsList.length === 0 && (
+                  <div className="p-8 text-center text-slate-400 font-bold">
+                    لا توجد حركات مرتجع مسجلة حالياً
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -2118,6 +2580,189 @@ export default function DashboardPage() {
                   className="w-full h-11 px-3 text-xs bg-slate-50 border border-slate-200 rounded-xl font-bold"
                 />
               </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  الرقم الضريبي (للإيصال الحراري):
+                </label>
+                <input
+                  type="text"
+                  value={settings.taxNumber || "684-219-450"}
+                  onChange={(e) => setSettings({ ...settings, taxNumber: e.target.value })}
+                  className="w-full h-11 px-3 text-xs bg-slate-50 border border-slate-200 rounded-xl font-mono font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  رقم السجل التجاري:
+                </label>
+                <input
+                  type="text"
+                  value={settings.commercialReg || "148920"}
+                  onChange={(e) => setSettings({ ...settings, commercialReg: e.target.value })}
+                  className="w-full h-11 px-3 text-xs bg-slate-50 border border-slate-200 rounded-xl font-mono font-bold"
+                />
+              </div>
+            </div>
+
+            {/* Scale Barcode Integration Settings */}
+            <div className="p-4 bg-sky-50/60 rounded-2xl border border-sky-200 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Scale className="w-5 h-5 text-sky-700" />
+                  <h3 className="font-black text-sm text-sky-900">
+                    إعدادات موازين الباركود الإلكترونية (CAS / Rongta / Digi)
+                  </h3>
+                </div>
+                <Link
+                  href="/scale"
+                  className="px-3 py-1 bg-[#004f9f] hover:bg-[#003875] text-white rounded-lg text-xs font-bold flex items-center gap-1"
+                >
+                  <span>فتح محطة الميزان ⚖️</span>
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-sky-900 mb-1">
+                    بادئات باركود الوزن (EAN-13):
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.weightPrefixes || "20,21"}
+                    onChange={(e) => setSettings({ ...settings, weightPrefixes: e.target.value })}
+                    className="w-full h-10 px-3 text-xs bg-white border border-sky-300 rounded-xl font-mono font-bold"
+                  />
+                  <span className="text-[10px] text-slate-500">مفصولة بفاصلة (مثال: 20,21)</span>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-sky-900 mb-1">
+                    بادئات باركود السعر (EAN-13):
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.pricePrefixes || "22,23"}
+                    onChange={(e) => setSettings({ ...settings, pricePrefixes: e.target.value })}
+                    className="w-full h-10 px-3 text-xs bg-white border border-sky-300 rounded-xl font-mono font-bold"
+                  />
+                  <span className="text-[10px] text-slate-500">مفصولة بفاصلة (مثال: 22,23)</span>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-sky-900 mb-1">
+                    عدد خانات كود الصنف (PLU Digits):
+                  </label>
+                  <input
+                    type="number"
+                    value={settings.pluDigits || 5}
+                    onChange={(e) => setSettings({ ...settings, pluDigits: parseInt(e.target.value) })}
+                    className="w-full h-10 px-3 text-xs bg-white border border-sky-300 rounded-xl font-mono font-bold"
+                  />
+                  <span className="text-[10px] text-slate-500">عادة 5 خانات (00001 إلى 99999)</span>
+                </div>
+              </div>
+
+              {/* Scale Export Actions */}
+              <div className="pt-2 border-t border-sky-200">
+                <div className="text-xs font-bold text-sky-900 mb-2">
+                  تصدير ملفات الأصناف الوزنية لبرامج الموازين:
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <a
+                    href="/api/scale/export?format=rongta"
+                    download
+                    className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-sky-300 text-sky-900 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5 text-sky-600" />
+                    <span>تصدير ملف روجنتا / إكس برينتر (RLS1000)</span>
+                  </a>
+
+                  <a
+                    href="/api/scale/export?format=cas"
+                    download
+                    className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-sky-300 text-sky-900 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5 text-sky-600" />
+                    <span>تصدير ملف كاس / ديجي (CL-Works)</span>
+                  </a>
+
+                  <a
+                    href="/api/scale/export?format=standard"
+                    download
+                    className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-sky-300 text-sky-900 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>تصدير شيت إكسيل القياسي (CSV UTF-8)</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Live Scale Barcode Tester */}
+              <div className="pt-2 border-t border-sky-200">
+                <div className="text-xs font-bold text-sky-900 mb-2">
+                  أداة فحص واختبار باركود الميزان الحي (Barcode Decoder Tester):
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={barcodeTestInput}
+                    onChange={(e) => setBarcodeTestInput(e.target.value)}
+                    placeholder="ضع كود باركود الميزان (مثال: 2000002002406)..."
+                    className="flex-1 h-10 px-3 text-xs bg-white border border-sky-300 rounded-xl font-mono font-bold"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleTestBarcode}
+                    className="px-4 bg-sky-700 hover:bg-sky-800 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1"
+                  >
+                    <Barcode className="w-3.5 h-3.5" />
+                    <span>فحص الباركود</span>
+                  </button>
+                </div>
+
+                {barcodeTestResult && (
+                  <div className="mt-3 p-3 bg-white rounded-xl border border-sky-300 text-xs space-y-1">
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">حالة الباركود:</span>
+                      <span className={`font-bold ${barcodeTestResult.isScaleBarcode ? "text-emerald-600" : "text-amber-600"}`}>
+                        {barcodeTestResult.isScaleBarcode ? "✅ باركود ميزان إلكتروني معتمد" : "ℹ️ باركود عادي"}
+                      </span>
+                    </div>
+                    {barcodeTestResult.isScaleBarcode && (
+                      <>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">النمط:</span>
+                          <span className="font-bold">{barcodeTestResult.mode === "weight" ? "وزني (بالجرام)" : "سعري"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">كود الصنف المستخرج (PLU):</span>
+                          <span className="font-mono font-black text-sky-700">{barcodeTestResult.plu}</span>
+                        </div>
+                        {barcodeTestResult.weightKg !== undefined && (
+                          <div className="flex justify-between">
+                            <span className="text-slate-500">الوزن الصافي:</span>
+                            <span className="font-mono font-black text-emerald-600">{barcodeTestResult.weightKg} كجم ({barcodeTestResult.weightKg * 1000} جرام)</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">الصنف المطابق بالسيستم:</span>
+                          <span className="font-bold text-slate-800">
+                            {barcodeTestResult.matchedProduct ? `${barcodeTestResult.matchedProduct.nameAr} (${barcodeTestResult.matchedProduct.basePrice} ج.م/كجم)` : "غير مسجل"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">رقم التحقق (Check Digit Modulo 10):</span>
+                          <span className={`font-bold ${barcodeTestResult.isValid ? "text-emerald-600" : "text-red-600"}`}>
+                            {barcodeTestResult.isValid ? "صحيح وسليم 100%" : "غير مطابق للمعايير الدولية"}
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div>
@@ -2434,7 +3079,50 @@ export default function DashboardPage() {
                   />
                   <span>متوفر للبيع</span>
                 </label>
+
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-sky-800">
+                  <input
+                    type="checkbox"
+                    checked={editingProduct.isWeighted || false}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, isWeighted: e.target.checked })}
+                    className="w-4 h-4 rounded text-sky-600"
+                  />
+                  <span>صنف وزني بالميزان ⚖️</span>
+                </label>
               </div>
+
+              {editingProduct.isWeighted && (
+                <div className="col-span-2 grid grid-cols-3 gap-3 p-3 bg-sky-50 rounded-2xl border border-sky-200">
+                  <div>
+                    <label className="block text-[11px] font-bold text-sky-900 mb-1">كود الميزان (PLU):</label>
+                    <input
+                      type="text"
+                      placeholder="00001"
+                      value={editingProduct.scaleItemCode || ""}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, scaleItemCode: e.target.value })}
+                      className="w-full h-9 px-2 text-xs bg-white border border-sky-300 rounded-lg font-mono font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-sky-900 mb-1">صلاحية الاستيكر (أيام):</label>
+                    <input
+                      type="number"
+                      value={editingProduct.shelfLifeDays || 3}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, shelfLifeDays: parseInt(e.target.value) })}
+                      className="w-full h-9 px-2 text-xs bg-white border border-sky-300 rounded-lg font-mono font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-sky-900 mb-1">وزن فارغ العبوة (جرام):</label>
+                    <input
+                      type="number"
+                      value={editingProduct.scaleTareWeight || 0}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, scaleTareWeight: parseFloat(e.target.value) })}
+                      className="w-full h-9 px-2 text-xs bg-white border border-sky-300 rounded-lg font-mono font-bold"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="pt-3 border-t border-slate-100 flex justify-end gap-2">
@@ -3381,6 +4069,218 @@ export default function DashboardPage() {
                 className="px-5 py-2 bg-[#004f9f] hover:bg-[#003875] text-white rounded-xl text-xs font-black shadow"
               >
                 حفظ بيانات الموظف والـ PIN
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL 12: CREATE RETURN (تسجيل مرتجع مبيعات / مشتريات) */}
+      {/* ======================================================== */}
+      {showReturnModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <form
+            onSubmit={handleCreateReturn}
+            className="bg-white text-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl border-2 border-red-500 space-y-4 max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex items-center justify-between border-b pb-3 border-slate-100">
+              <div className="flex items-center gap-2">
+                <RotateCcw className="w-6 h-6 text-red-600" />
+                <h3 className="font-black text-base text-slate-900">
+                  تسجيل مرتجع مالي ومخزني جديد
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowReturnModal(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Return Type Toggle */}
+            <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
+              <button
+                type="button"
+                onClick={() =>
+                  setReturnForm({
+                    ...returnForm,
+                    type: "sales_return",
+                    customerOrSupplier: "عميل نقدي",
+                  })
+                }
+                className={`py-2 rounded-lg text-xs font-black transition-all ${
+                  returnForm.type === "sales_return"
+                    ? "bg-red-600 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                مرتجع مبيعات (من عميل) 🛒
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setReturnForm({
+                    ...returnForm,
+                    type: "purchase_return",
+                    customerOrSupplier: suppliers[0]?.name || "المورد",
+                    supplierId: suppliers[0]?.id || "",
+                  })
+                }
+                className={`py-2 rounded-lg text-xs font-black transition-all ${
+                  returnForm.type === "purchase_return"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                مرتجع مشتريات (لمورد) 🏢
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  رقم الفاتورة الأصلية:
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder={returnForm.type === "sales_return" ? "MRW-1002" : "PUR-1001"}
+                  value={returnForm.referenceNumber}
+                  onChange={(e) =>
+                    setReturnForm({ ...returnForm, referenceNumber: e.target.value })
+                  }
+                  className="w-full h-10 px-3 text-xs bg-slate-50 border border-slate-200 rounded-xl font-mono font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  {returnForm.type === "sales_return" ? "اسم العميل:" : "المورد:"}
+                </label>
+                {returnForm.type === "sales_return" ? (
+                  <input
+                    type="text"
+                    required
+                    value={returnForm.customerOrSupplier}
+                    onChange={(e) =>
+                      setReturnForm({ ...returnForm, customerOrSupplier: e.target.value })
+                    }
+                    className="w-full h-10 px-3 text-xs bg-slate-50 border border-slate-200 rounded-xl font-bold"
+                  />
+                ) : (
+                  <select
+                    value={returnForm.supplierId}
+                    onChange={(e) => {
+                      const sup = suppliers.find((s) => s.id === e.target.value);
+                      setReturnForm({
+                        ...returnForm,
+                        supplierId: e.target.value,
+                        customerOrSupplier: sup?.name || "",
+                      });
+                    }}
+                    className="w-full h-10 px-3 text-xs bg-slate-50 border border-slate-200 rounded-xl font-bold"
+                  >
+                    {suppliers.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            </div>
+
+            {/* Items Returned */}
+            <div className="space-y-2 pt-2 border-t border-slate-100">
+              <label className="block text-xs font-bold text-slate-700">الأصناف المرتجعة:</label>
+              {returnForm.items.map((item, idx) => (
+                <div key={idx} className="grid grid-cols-12 gap-2 items-center bg-slate-50 p-2 rounded-xl">
+                  <div className="col-span-6">
+                    <select
+                      value={item.productId}
+                      onChange={(e) => {
+                        const prod = products.find((p) => p.id === e.target.value);
+                        const updated = [...returnForm.items];
+                        const price = returnForm.type === "sales_return" ? (prod?.basePrice || 0) : (prod?.costPrice || 0);
+                        updated[idx] = {
+                          ...updated[idx],
+                          productId: e.target.value,
+                          nameAr: prod?.nameAr || "",
+                          price,
+                          total: price * updated[idx].qty,
+                        };
+                        const newTotal = updated.reduce((sum, i) => sum + i.total, 0);
+                        setReturnForm({ ...returnForm, items: updated, totalAmount: newTotal });
+                      }}
+                      className="w-full h-9 px-2 text-xs bg-white border border-slate-200 rounded-lg font-bold"
+                    >
+                      {products.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.nameAr} ({p.basePrice} ج.م)
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-span-3">
+                    <input
+                      type="number"
+                      step="any"
+                      min="0.1"
+                      placeholder="الكمية"
+                      value={item.qty}
+                      onChange={(e) => {
+                        const qty = parseFloat(e.target.value) || 0;
+                        const updated = [...returnForm.items];
+                        updated[idx].qty = qty;
+                        updated[idx].total = qty * updated[idx].price;
+                        const newTotal = updated.reduce((sum, i) => sum + i.total, 0);
+                        setReturnForm({ ...returnForm, items: updated, totalAmount: newTotal });
+                      }}
+                      className="w-full h-9 px-2 text-xs bg-white border border-slate-200 rounded-lg font-mono font-bold"
+                    />
+                  </div>
+                  <div className="col-span-3 text-left font-mono font-black text-xs text-red-600">
+                    {item.total.toFixed(2)} ج.م
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Total Amount & Reason */}
+            <div className="p-3 bg-red-50 rounded-xl border border-red-200 flex justify-between items-center text-xs font-black">
+              <span className="text-red-900">إجمالي المبلغ المسترد:</span>
+              <span className="text-base text-red-600 font-mono">
+                {returnForm.totalAmount.toFixed(2)} ج.م
+              </span>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">سبب الإرجاع:</label>
+              <input
+                type="text"
+                placeholder="صنف تالف، منتهي الصلاحية، طلب العميل استبدال..."
+                value={returnForm.reason}
+                onChange={(e) => setReturnForm({ ...returnForm, reason: e.target.value })}
+                className="w-full h-10 px-3 text-xs bg-slate-50 border border-slate-200 rounded-xl font-bold"
+              />
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowReturnModal(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold"
+              >
+                إلغاء
+              </button>
+              <button
+                type="submit"
+                className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-black shadow"
+              >
+                اعتماد المرتجع وإعادة المخزون
               </button>
             </div>
           </form>

@@ -74,6 +74,11 @@ export type SupplierPayment = $Result.DefaultSelection<Prisma.$SupplierPaymentPa
  */
 export type StockMovement = $Result.DefaultSelection<Prisma.$StockMovementPayload>
 /**
+ * Model ReturnRecord
+ * 
+ */
+export type ReturnRecord = $Result.DefaultSelection<Prisma.$ReturnRecordPayload>
+/**
  * Model TreasuryTransaction
  * 
  */
@@ -334,6 +339,16 @@ export class PrismaClient<
     * ```
     */
   get stockMovement(): Prisma.StockMovementDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.returnRecord`: Exposes CRUD operations for the **ReturnRecord** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ReturnRecords
+    * const returnRecords = await prisma.returnRecord.findMany()
+    * ```
+    */
+  get returnRecord(): Prisma.ReturnRecordDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.treasuryTransaction`: Exposes CRUD operations for the **TreasuryTransaction** model.
@@ -833,6 +848,7 @@ export namespace Prisma {
     Purchase: 'Purchase',
     SupplierPayment: 'SupplierPayment',
     StockMovement: 'StockMovement',
+    ReturnRecord: 'ReturnRecord',
     TreasuryTransaction: 'TreasuryTransaction',
     ChatMessage: 'ChatMessage',
     SystemSettings: 'SystemSettings',
@@ -852,7 +868,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "branch" | "category" | "product" | "order" | "customer" | "captain" | "deliveryZone" | "supplier" | "purchase" | "supplierPayment" | "stockMovement" | "treasuryTransaction" | "chatMessage" | "systemSettings" | "expense"
+      modelProps: "user" | "branch" | "category" | "product" | "order" | "customer" | "captain" | "deliveryZone" | "supplier" | "purchase" | "supplierPayment" | "stockMovement" | "returnRecord" | "treasuryTransaction" | "chatMessage" | "systemSettings" | "expense"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1744,6 +1760,80 @@ export namespace Prisma {
           }
         }
       }
+      ReturnRecord: {
+        payload: Prisma.$ReturnRecordPayload<ExtArgs>
+        fields: Prisma.ReturnRecordFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ReturnRecordFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReturnRecordPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ReturnRecordFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReturnRecordPayload>
+          }
+          findFirst: {
+            args: Prisma.ReturnRecordFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReturnRecordPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ReturnRecordFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReturnRecordPayload>
+          }
+          findMany: {
+            args: Prisma.ReturnRecordFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReturnRecordPayload>[]
+          }
+          create: {
+            args: Prisma.ReturnRecordCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReturnRecordPayload>
+          }
+          createMany: {
+            args: Prisma.ReturnRecordCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ReturnRecordCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReturnRecordPayload>[]
+          }
+          delete: {
+            args: Prisma.ReturnRecordDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReturnRecordPayload>
+          }
+          update: {
+            args: Prisma.ReturnRecordUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReturnRecordPayload>
+          }
+          deleteMany: {
+            args: Prisma.ReturnRecordDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ReturnRecordUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ReturnRecordUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReturnRecordPayload>[]
+          }
+          upsert: {
+            args: Prisma.ReturnRecordUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReturnRecordPayload>
+          }
+          aggregate: {
+            args: Prisma.ReturnRecordAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateReturnRecord>
+          }
+          groupBy: {
+            args: Prisma.ReturnRecordGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ReturnRecordGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ReturnRecordCountArgs<ExtArgs>
+            result: $Utils.Optional<ReturnRecordCountAggregateOutputType> | number
+          }
+        }
+      }
       TreasuryTransaction: {
         payload: Prisma.$TreasuryTransactionPayload<ExtArgs>
         fields: Prisma.TreasuryTransactionFieldRefs
@@ -2175,6 +2265,7 @@ export namespace Prisma {
     purchase?: PurchaseOmit
     supplierPayment?: SupplierPaymentOmit
     stockMovement?: StockMovementOmit
+    returnRecord?: ReturnRecordOmit
     treasuryTransaction?: TreasuryTransactionOmit
     chatMessage?: ChatMessageOmit
     systemSettings?: SystemSettingsOmit
@@ -5505,6 +5596,8 @@ export namespace Prisma {
     basePrice: number | null
     originalPrice: number | null
     discountPercent: number | null
+    shelfLifeDays: number | null
+    scaleTareWeight: number | null
     stockQty: number | null
     minStockQty: number | null
     openingStock: number | null
@@ -5516,6 +5609,8 @@ export namespace Prisma {
     basePrice: number | null
     originalPrice: number | null
     discountPercent: number | null
+    shelfLifeDays: number | null
+    scaleTareWeight: number | null
     stockQty: number | null
     minStockQty: number | null
     openingStock: number | null
@@ -5536,6 +5631,9 @@ export namespace Prisma {
     isOffer: boolean | null
     isExpress: boolean | null
     isWeighted: boolean | null
+    scaleItemCode: string | null
+    shelfLifeDays: number | null
+    scaleTareWeight: number | null
     inStock: boolean | null
     stockQty: number | null
     minStockQty: number | null
@@ -5560,6 +5658,9 @@ export namespace Prisma {
     isOffer: boolean | null
     isExpress: boolean | null
     isWeighted: boolean | null
+    scaleItemCode: string | null
+    shelfLifeDays: number | null
+    scaleTareWeight: number | null
     inStock: boolean | null
     stockQty: number | null
     minStockQty: number | null
@@ -5584,6 +5685,9 @@ export namespace Prisma {
     isOffer: number
     isExpress: number
     isWeighted: number
+    scaleItemCode: number
+    shelfLifeDays: number
+    scaleTareWeight: number
     inStock: number
     stockQty: number
     minStockQty: number
@@ -5601,6 +5705,8 @@ export namespace Prisma {
     basePrice?: true
     originalPrice?: true
     discountPercent?: true
+    shelfLifeDays?: true
+    scaleTareWeight?: true
     stockQty?: true
     minStockQty?: true
     openingStock?: true
@@ -5612,6 +5718,8 @@ export namespace Prisma {
     basePrice?: true
     originalPrice?: true
     discountPercent?: true
+    shelfLifeDays?: true
+    scaleTareWeight?: true
     stockQty?: true
     minStockQty?: true
     openingStock?: true
@@ -5632,6 +5740,9 @@ export namespace Prisma {
     isOffer?: true
     isExpress?: true
     isWeighted?: true
+    scaleItemCode?: true
+    shelfLifeDays?: true
+    scaleTareWeight?: true
     inStock?: true
     stockQty?: true
     minStockQty?: true
@@ -5656,6 +5767,9 @@ export namespace Prisma {
     isOffer?: true
     isExpress?: true
     isWeighted?: true
+    scaleItemCode?: true
+    shelfLifeDays?: true
+    scaleTareWeight?: true
     inStock?: true
     stockQty?: true
     minStockQty?: true
@@ -5680,6 +5794,9 @@ export namespace Prisma {
     isOffer?: true
     isExpress?: true
     isWeighted?: true
+    scaleItemCode?: true
+    shelfLifeDays?: true
+    scaleTareWeight?: true
     inStock?: true
     stockQty?: true
     minStockQty?: true
@@ -5791,6 +5908,9 @@ export namespace Prisma {
     isOffer: boolean
     isExpress: boolean
     isWeighted: boolean
+    scaleItemCode: string | null
+    shelfLifeDays: number
+    scaleTareWeight: number
     inStock: boolean
     stockQty: number
     minStockQty: number
@@ -5834,6 +5954,9 @@ export namespace Prisma {
     isOffer?: boolean
     isExpress?: boolean
     isWeighted?: boolean
+    scaleItemCode?: boolean
+    shelfLifeDays?: boolean
+    scaleTareWeight?: boolean
     inStock?: boolean
     stockQty?: boolean
     minStockQty?: boolean
@@ -5858,6 +5981,9 @@ export namespace Prisma {
     isOffer?: boolean
     isExpress?: boolean
     isWeighted?: boolean
+    scaleItemCode?: boolean
+    shelfLifeDays?: boolean
+    scaleTareWeight?: boolean
     inStock?: boolean
     stockQty?: boolean
     minStockQty?: boolean
@@ -5882,6 +6008,9 @@ export namespace Prisma {
     isOffer?: boolean
     isExpress?: boolean
     isWeighted?: boolean
+    scaleItemCode?: boolean
+    shelfLifeDays?: boolean
+    scaleTareWeight?: boolean
     inStock?: boolean
     stockQty?: boolean
     minStockQty?: boolean
@@ -5906,6 +6035,9 @@ export namespace Prisma {
     isOffer?: boolean
     isExpress?: boolean
     isWeighted?: boolean
+    scaleItemCode?: boolean
+    shelfLifeDays?: boolean
+    scaleTareWeight?: boolean
     inStock?: boolean
     stockQty?: boolean
     minStockQty?: boolean
@@ -5916,7 +6048,7 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nameAr" | "brand" | "category" | "unit" | "barcode" | "costPrice" | "basePrice" | "originalPrice" | "discountPercent" | "isOffer" | "isExpress" | "isWeighted" | "inStock" | "stockQty" | "minStockQty" | "openingStock" | "image" | "description" | "sortOrder" | "createdAt", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nameAr" | "brand" | "category" | "unit" | "barcode" | "costPrice" | "basePrice" | "originalPrice" | "discountPercent" | "isOffer" | "isExpress" | "isWeighted" | "scaleItemCode" | "shelfLifeDays" | "scaleTareWeight" | "inStock" | "stockQty" | "minStockQty" | "openingStock" | "image" | "description" | "sortOrder" | "createdAt", ExtArgs["result"]["product"]>
 
   export type $ProductPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Product"
@@ -5935,6 +6067,9 @@ export namespace Prisma {
       isOffer: boolean
       isExpress: boolean
       isWeighted: boolean
+      scaleItemCode: string | null
+      shelfLifeDays: number
+      scaleTareWeight: number
       inStock: boolean
       stockQty: number
       minStockQty: number
@@ -6379,6 +6514,9 @@ export namespace Prisma {
     readonly isOffer: FieldRef<"Product", 'Boolean'>
     readonly isExpress: FieldRef<"Product", 'Boolean'>
     readonly isWeighted: FieldRef<"Product", 'Boolean'>
+    readonly scaleItemCode: FieldRef<"Product", 'String'>
+    readonly shelfLifeDays: FieldRef<"Product", 'Int'>
+    readonly scaleTareWeight: FieldRef<"Product", 'Float'>
     readonly inStock: FieldRef<"Product", 'Boolean'>
     readonly stockQty: FieldRef<"Product", 'Int'>
     readonly minStockQty: FieldRef<"Product", 'Int'>
@@ -6806,6 +6944,7 @@ export namespace Prisma {
     captainPhone: string | null
     assignedPicker: string | null
     timeline: string | null
+    isSettled: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6832,6 +6971,7 @@ export namespace Prisma {
     captainPhone: string | null
     assignedPicker: string | null
     timeline: string | null
+    isSettled: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6858,6 +6998,7 @@ export namespace Prisma {
     captainPhone: number
     assignedPicker: number
     timeline: number
+    isSettled: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -6900,6 +7041,7 @@ export namespace Prisma {
     captainPhone?: true
     assignedPicker?: true
     timeline?: true
+    isSettled?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6926,6 +7068,7 @@ export namespace Prisma {
     captainPhone?: true
     assignedPicker?: true
     timeline?: true
+    isSettled?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6952,6 +7095,7 @@ export namespace Prisma {
     captainPhone?: true
     assignedPicker?: true
     timeline?: true
+    isSettled?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -7065,6 +7209,7 @@ export namespace Prisma {
     captainPhone: string | null
     assignedPicker: string | null
     timeline: string
+    isSettled: boolean
     createdAt: Date
     updatedAt: Date
     _count: OrderCountAggregateOutputType | null
@@ -7110,6 +7255,7 @@ export namespace Prisma {
     captainPhone?: boolean
     assignedPicker?: boolean
     timeline?: boolean
+    isSettled?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["order"]>
@@ -7136,6 +7282,7 @@ export namespace Prisma {
     captainPhone?: boolean
     assignedPicker?: boolean
     timeline?: boolean
+    isSettled?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["order"]>
@@ -7162,6 +7309,7 @@ export namespace Prisma {
     captainPhone?: boolean
     assignedPicker?: boolean
     timeline?: boolean
+    isSettled?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["order"]>
@@ -7188,11 +7336,12 @@ export namespace Prisma {
     captainPhone?: boolean
     assignedPicker?: boolean
     timeline?: boolean
+    isSettled?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNumber" | "customerName" | "phone" | "address" | "zone" | "branchName" | "orderType" | "status" | "items" | "subtotal" | "deliveryFee" | "discount" | "total" | "paymentMethod" | "notes" | "captainId" | "captainName" | "captainPhone" | "assignedPicker" | "timeline" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNumber" | "customerName" | "phone" | "address" | "zone" | "branchName" | "orderType" | "status" | "items" | "subtotal" | "deliveryFee" | "discount" | "total" | "paymentMethod" | "notes" | "captainId" | "captainName" | "captainPhone" | "assignedPicker" | "timeline" | "isSettled" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 
   export type $OrderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Order"
@@ -7219,6 +7368,7 @@ export namespace Prisma {
       captainPhone: string | null
       assignedPicker: string | null
       timeline: string
+      isSettled: boolean
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["order"]>
@@ -7665,6 +7815,7 @@ export namespace Prisma {
     readonly captainPhone: FieldRef<"Order", 'String'>
     readonly assignedPicker: FieldRef<"Order", 'String'>
     readonly timeline: FieldRef<"Order", 'String'>
+    readonly isSettled: FieldRef<"Order", 'Boolean'>
     readonly createdAt: FieldRef<"Order", 'DateTime'>
     readonly updatedAt: FieldRef<"Order", 'DateTime'>
   }
@@ -9134,8 +9285,18 @@ export namespace Prisma {
 
   export type AggregateCaptain = {
     _count: CaptainCountAggregateOutputType | null
+    _avg: CaptainAvgAggregateOutputType | null
+    _sum: CaptainSumAggregateOutputType | null
     _min: CaptainMinAggregateOutputType | null
     _max: CaptainMaxAggregateOutputType | null
+  }
+
+  export type CaptainAvgAggregateOutputType = {
+    pendingBalance: number | null
+  }
+
+  export type CaptainSumAggregateOutputType = {
+    pendingBalance: number | null
   }
 
   export type CaptainMinAggregateOutputType = {
@@ -9144,6 +9305,7 @@ export namespace Prisma {
     phone: string | null
     vehicle: string | null
     zone: string | null
+    pendingBalance: number | null
     isActive: boolean | null
     createdAt: Date | null
   }
@@ -9154,6 +9316,7 @@ export namespace Prisma {
     phone: string | null
     vehicle: string | null
     zone: string | null
+    pendingBalance: number | null
     isActive: boolean | null
     createdAt: Date | null
   }
@@ -9164,11 +9327,20 @@ export namespace Prisma {
     phone: number
     vehicle: number
     zone: number
+    pendingBalance: number
     isActive: number
     createdAt: number
     _all: number
   }
 
+
+  export type CaptainAvgAggregateInputType = {
+    pendingBalance?: true
+  }
+
+  export type CaptainSumAggregateInputType = {
+    pendingBalance?: true
+  }
 
   export type CaptainMinAggregateInputType = {
     id?: true
@@ -9176,6 +9348,7 @@ export namespace Prisma {
     phone?: true
     vehicle?: true
     zone?: true
+    pendingBalance?: true
     isActive?: true
     createdAt?: true
   }
@@ -9186,6 +9359,7 @@ export namespace Prisma {
     phone?: true
     vehicle?: true
     zone?: true
+    pendingBalance?: true
     isActive?: true
     createdAt?: true
   }
@@ -9196,6 +9370,7 @@ export namespace Prisma {
     phone?: true
     vehicle?: true
     zone?: true
+    pendingBalance?: true
     isActive?: true
     createdAt?: true
     _all?: true
@@ -9239,6 +9414,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: CaptainAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CaptainSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: CaptainMinAggregateInputType
@@ -9269,6 +9456,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: CaptainCountAggregateInputType | true
+    _avg?: CaptainAvgAggregateInputType
+    _sum?: CaptainSumAggregateInputType
     _min?: CaptainMinAggregateInputType
     _max?: CaptainMaxAggregateInputType
   }
@@ -9279,9 +9468,12 @@ export namespace Prisma {
     phone: string
     vehicle: string
     zone: string
+    pendingBalance: number
     isActive: boolean
     createdAt: Date
     _count: CaptainCountAggregateOutputType | null
+    _avg: CaptainAvgAggregateOutputType | null
+    _sum: CaptainSumAggregateOutputType | null
     _min: CaptainMinAggregateOutputType | null
     _max: CaptainMaxAggregateOutputType | null
   }
@@ -9306,6 +9498,7 @@ export namespace Prisma {
     phone?: boolean
     vehicle?: boolean
     zone?: boolean
+    pendingBalance?: boolean
     isActive?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["captain"]>
@@ -9316,6 +9509,7 @@ export namespace Prisma {
     phone?: boolean
     vehicle?: boolean
     zone?: boolean
+    pendingBalance?: boolean
     isActive?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["captain"]>
@@ -9326,6 +9520,7 @@ export namespace Prisma {
     phone?: boolean
     vehicle?: boolean
     zone?: boolean
+    pendingBalance?: boolean
     isActive?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["captain"]>
@@ -9336,11 +9531,12 @@ export namespace Prisma {
     phone?: boolean
     vehicle?: boolean
     zone?: boolean
+    pendingBalance?: boolean
     isActive?: boolean
     createdAt?: boolean
   }
 
-  export type CaptainOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "phone" | "vehicle" | "zone" | "isActive" | "createdAt", ExtArgs["result"]["captain"]>
+  export type CaptainOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "phone" | "vehicle" | "zone" | "pendingBalance" | "isActive" | "createdAt", ExtArgs["result"]["captain"]>
 
   export type $CaptainPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Captain"
@@ -9351,6 +9547,7 @@ export namespace Prisma {
       phone: string
       vehicle: string
       zone: string
+      pendingBalance: number
       isActive: boolean
       createdAt: Date
     }, ExtArgs["result"]["captain"]>
@@ -9781,6 +9978,7 @@ export namespace Prisma {
     readonly phone: FieldRef<"Captain", 'String'>
     readonly vehicle: FieldRef<"Captain", 'String'>
     readonly zone: FieldRef<"Captain", 'String'>
+    readonly pendingBalance: FieldRef<"Captain", 'Float'>
     readonly isActive: FieldRef<"Captain", 'Boolean'>
     readonly createdAt: FieldRef<"Captain", 'DateTime'>
   }
@@ -12476,6 +12674,7 @@ export namespace Prisma {
     paidAmount: number | null
     remainingAmount: number | null
     paymentType: string | null
+    status: string | null
     notes: string | null
     receivedBy: string | null
     createdAt: Date | null
@@ -12492,6 +12691,7 @@ export namespace Prisma {
     paidAmount: number | null
     remainingAmount: number | null
     paymentType: string | null
+    status: string | null
     notes: string | null
     receivedBy: string | null
     createdAt: Date | null
@@ -12508,6 +12708,7 @@ export namespace Prisma {
     paidAmount: number
     remainingAmount: number
     paymentType: number
+    status: number
     notes: number
     receivedBy: number
     createdAt: number
@@ -12538,6 +12739,7 @@ export namespace Prisma {
     paidAmount?: true
     remainingAmount?: true
     paymentType?: true
+    status?: true
     notes?: true
     receivedBy?: true
     createdAt?: true
@@ -12554,6 +12756,7 @@ export namespace Prisma {
     paidAmount?: true
     remainingAmount?: true
     paymentType?: true
+    status?: true
     notes?: true
     receivedBy?: true
     createdAt?: true
@@ -12570,6 +12773,7 @@ export namespace Prisma {
     paidAmount?: true
     remainingAmount?: true
     paymentType?: true
+    status?: true
     notes?: true
     receivedBy?: true
     createdAt?: true
@@ -12673,6 +12877,7 @@ export namespace Prisma {
     paidAmount: number
     remainingAmount: number
     paymentType: string
+    status: string
     notes: string | null
     receivedBy: string | null
     createdAt: Date
@@ -12708,6 +12913,7 @@ export namespace Prisma {
     paidAmount?: boolean
     remainingAmount?: boolean
     paymentType?: boolean
+    status?: boolean
     notes?: boolean
     receivedBy?: boolean
     createdAt?: boolean
@@ -12725,6 +12931,7 @@ export namespace Prisma {
     paidAmount?: boolean
     remainingAmount?: boolean
     paymentType?: boolean
+    status?: boolean
     notes?: boolean
     receivedBy?: boolean
     createdAt?: boolean
@@ -12742,6 +12949,7 @@ export namespace Prisma {
     paidAmount?: boolean
     remainingAmount?: boolean
     paymentType?: boolean
+    status?: boolean
     notes?: boolean
     receivedBy?: boolean
     createdAt?: boolean
@@ -12759,12 +12967,13 @@ export namespace Prisma {
     paidAmount?: boolean
     remainingAmount?: boolean
     paymentType?: boolean
+    status?: boolean
     notes?: boolean
     receivedBy?: boolean
     createdAt?: boolean
   }
 
-  export type PurchaseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "invoiceNumber" | "supplierId" | "supplierName" | "invoiceDate" | "items" | "totalAmount" | "paidAmount" | "remainingAmount" | "paymentType" | "notes" | "receivedBy" | "createdAt", ExtArgs["result"]["purchase"]>
+  export type PurchaseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "invoiceNumber" | "supplierId" | "supplierName" | "invoiceDate" | "items" | "totalAmount" | "paidAmount" | "remainingAmount" | "paymentType" | "status" | "notes" | "receivedBy" | "createdAt", ExtArgs["result"]["purchase"]>
   export type PurchaseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     supplier?: boolean | SupplierDefaultArgs<ExtArgs>
   }
@@ -12791,6 +13000,7 @@ export namespace Prisma {
       paidAmount: number
       remainingAmount: number
       paymentType: string
+      status: string
       notes: string | null
       receivedBy: string | null
       createdAt: Date
@@ -13228,6 +13438,7 @@ export namespace Prisma {
     readonly paidAmount: FieldRef<"Purchase", 'Float'>
     readonly remainingAmount: FieldRef<"Purchase", 'Float'>
     readonly paymentType: FieldRef<"Purchase", 'String'>
+    readonly status: FieldRef<"Purchase", 'String'>
     readonly notes: FieldRef<"Purchase", 'String'>
     readonly receivedBy: FieldRef<"Purchase", 'String'>
     readonly createdAt: FieldRef<"Purchase", 'DateTime'>
@@ -15567,8 +15778,8 @@ export namespace Prisma {
     readonly productId: FieldRef<"StockMovement", 'String'>
     readonly productName: FieldRef<"StockMovement", 'String'>
     readonly movementType: FieldRef<"StockMovement", 'String'>
-    readonly quantity: FieldRef<"StockMovement", 'Int'>
-    readonly balanceAfter: FieldRef<"StockMovement", 'Int'>
+    readonly quantity: FieldRef<"StockMovement", 'Float'>
+    readonly balanceAfter: FieldRef<"StockMovement", 'Float'>
     readonly unitCost: FieldRef<"StockMovement", 'Float'>
     readonly reference: FieldRef<"StockMovement", 'String'>
     readonly notes: FieldRef<"StockMovement", 'String'>
@@ -15942,6 +16153,1105 @@ export namespace Prisma {
      * Omit specific fields from the StockMovement
      */
     omit?: StockMovementOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ReturnRecord
+   */
+
+  export type AggregateReturnRecord = {
+    _count: ReturnRecordCountAggregateOutputType | null
+    _avg: ReturnRecordAvgAggregateOutputType | null
+    _sum: ReturnRecordSumAggregateOutputType | null
+    _min: ReturnRecordMinAggregateOutputType | null
+    _max: ReturnRecordMaxAggregateOutputType | null
+  }
+
+  export type ReturnRecordAvgAggregateOutputType = {
+    totalAmount: number | null
+  }
+
+  export type ReturnRecordSumAggregateOutputType = {
+    totalAmount: number | null
+  }
+
+  export type ReturnRecordMinAggregateOutputType = {
+    id: string | null
+    returnNumber: string | null
+    type: string | null
+    referenceNumber: string | null
+    customerOrSupplier: string | null
+    items: string | null
+    totalAmount: number | null
+    reason: string | null
+    recordedBy: string | null
+    createdAt: Date | null
+  }
+
+  export type ReturnRecordMaxAggregateOutputType = {
+    id: string | null
+    returnNumber: string | null
+    type: string | null
+    referenceNumber: string | null
+    customerOrSupplier: string | null
+    items: string | null
+    totalAmount: number | null
+    reason: string | null
+    recordedBy: string | null
+    createdAt: Date | null
+  }
+
+  export type ReturnRecordCountAggregateOutputType = {
+    id: number
+    returnNumber: number
+    type: number
+    referenceNumber: number
+    customerOrSupplier: number
+    items: number
+    totalAmount: number
+    reason: number
+    recordedBy: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ReturnRecordAvgAggregateInputType = {
+    totalAmount?: true
+  }
+
+  export type ReturnRecordSumAggregateInputType = {
+    totalAmount?: true
+  }
+
+  export type ReturnRecordMinAggregateInputType = {
+    id?: true
+    returnNumber?: true
+    type?: true
+    referenceNumber?: true
+    customerOrSupplier?: true
+    items?: true
+    totalAmount?: true
+    reason?: true
+    recordedBy?: true
+    createdAt?: true
+  }
+
+  export type ReturnRecordMaxAggregateInputType = {
+    id?: true
+    returnNumber?: true
+    type?: true
+    referenceNumber?: true
+    customerOrSupplier?: true
+    items?: true
+    totalAmount?: true
+    reason?: true
+    recordedBy?: true
+    createdAt?: true
+  }
+
+  export type ReturnRecordCountAggregateInputType = {
+    id?: true
+    returnNumber?: true
+    type?: true
+    referenceNumber?: true
+    customerOrSupplier?: true
+    items?: true
+    totalAmount?: true
+    reason?: true
+    recordedBy?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ReturnRecordAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ReturnRecord to aggregate.
+     */
+    where?: ReturnRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ReturnRecords to fetch.
+     */
+    orderBy?: ReturnRecordOrderByWithRelationInput | ReturnRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ReturnRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ReturnRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ReturnRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ReturnRecords
+    **/
+    _count?: true | ReturnRecordCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ReturnRecordAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ReturnRecordSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ReturnRecordMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ReturnRecordMaxAggregateInputType
+  }
+
+  export type GetReturnRecordAggregateType<T extends ReturnRecordAggregateArgs> = {
+        [P in keyof T & keyof AggregateReturnRecord]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateReturnRecord[P]>
+      : GetScalarType<T[P], AggregateReturnRecord[P]>
+  }
+
+
+
+
+  export type ReturnRecordGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ReturnRecordWhereInput
+    orderBy?: ReturnRecordOrderByWithAggregationInput | ReturnRecordOrderByWithAggregationInput[]
+    by: ReturnRecordScalarFieldEnum[] | ReturnRecordScalarFieldEnum
+    having?: ReturnRecordScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ReturnRecordCountAggregateInputType | true
+    _avg?: ReturnRecordAvgAggregateInputType
+    _sum?: ReturnRecordSumAggregateInputType
+    _min?: ReturnRecordMinAggregateInputType
+    _max?: ReturnRecordMaxAggregateInputType
+  }
+
+  export type ReturnRecordGroupByOutputType = {
+    id: string
+    returnNumber: string
+    type: string
+    referenceNumber: string
+    customerOrSupplier: string
+    items: string
+    totalAmount: number
+    reason: string | null
+    recordedBy: string | null
+    createdAt: Date
+    _count: ReturnRecordCountAggregateOutputType | null
+    _avg: ReturnRecordAvgAggregateOutputType | null
+    _sum: ReturnRecordSumAggregateOutputType | null
+    _min: ReturnRecordMinAggregateOutputType | null
+    _max: ReturnRecordMaxAggregateOutputType | null
+  }
+
+  type GetReturnRecordGroupByPayload<T extends ReturnRecordGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ReturnRecordGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ReturnRecordGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ReturnRecordGroupByOutputType[P]>
+            : GetScalarType<T[P], ReturnRecordGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ReturnRecordSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    returnNumber?: boolean
+    type?: boolean
+    referenceNumber?: boolean
+    customerOrSupplier?: boolean
+    items?: boolean
+    totalAmount?: boolean
+    reason?: boolean
+    recordedBy?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["returnRecord"]>
+
+  export type ReturnRecordSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    returnNumber?: boolean
+    type?: boolean
+    referenceNumber?: boolean
+    customerOrSupplier?: boolean
+    items?: boolean
+    totalAmount?: boolean
+    reason?: boolean
+    recordedBy?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["returnRecord"]>
+
+  export type ReturnRecordSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    returnNumber?: boolean
+    type?: boolean
+    referenceNumber?: boolean
+    customerOrSupplier?: boolean
+    items?: boolean
+    totalAmount?: boolean
+    reason?: boolean
+    recordedBy?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["returnRecord"]>
+
+  export type ReturnRecordSelectScalar = {
+    id?: boolean
+    returnNumber?: boolean
+    type?: boolean
+    referenceNumber?: boolean
+    customerOrSupplier?: boolean
+    items?: boolean
+    totalAmount?: boolean
+    reason?: boolean
+    recordedBy?: boolean
+    createdAt?: boolean
+  }
+
+  export type ReturnRecordOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "returnNumber" | "type" | "referenceNumber" | "customerOrSupplier" | "items" | "totalAmount" | "reason" | "recordedBy" | "createdAt", ExtArgs["result"]["returnRecord"]>
+
+  export type $ReturnRecordPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ReturnRecord"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      returnNumber: string
+      type: string
+      referenceNumber: string
+      customerOrSupplier: string
+      items: string
+      totalAmount: number
+      reason: string | null
+      recordedBy: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["returnRecord"]>
+    composites: {}
+  }
+
+  type ReturnRecordGetPayload<S extends boolean | null | undefined | ReturnRecordDefaultArgs> = $Result.GetResult<Prisma.$ReturnRecordPayload, S>
+
+  type ReturnRecordCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ReturnRecordFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ReturnRecordCountAggregateInputType | true
+    }
+
+  export interface ReturnRecordDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ReturnRecord'], meta: { name: 'ReturnRecord' } }
+    /**
+     * Find zero or one ReturnRecord that matches the filter.
+     * @param {ReturnRecordFindUniqueArgs} args - Arguments to find a ReturnRecord
+     * @example
+     * // Get one ReturnRecord
+     * const returnRecord = await prisma.returnRecord.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ReturnRecordFindUniqueArgs>(args: SelectSubset<T, ReturnRecordFindUniqueArgs<ExtArgs>>): Prisma__ReturnRecordClient<$Result.GetResult<Prisma.$ReturnRecordPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ReturnRecord that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ReturnRecordFindUniqueOrThrowArgs} args - Arguments to find a ReturnRecord
+     * @example
+     * // Get one ReturnRecord
+     * const returnRecord = await prisma.returnRecord.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ReturnRecordFindUniqueOrThrowArgs>(args: SelectSubset<T, ReturnRecordFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ReturnRecordClient<$Result.GetResult<Prisma.$ReturnRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ReturnRecord that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReturnRecordFindFirstArgs} args - Arguments to find a ReturnRecord
+     * @example
+     * // Get one ReturnRecord
+     * const returnRecord = await prisma.returnRecord.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ReturnRecordFindFirstArgs>(args?: SelectSubset<T, ReturnRecordFindFirstArgs<ExtArgs>>): Prisma__ReturnRecordClient<$Result.GetResult<Prisma.$ReturnRecordPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ReturnRecord that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReturnRecordFindFirstOrThrowArgs} args - Arguments to find a ReturnRecord
+     * @example
+     * // Get one ReturnRecord
+     * const returnRecord = await prisma.returnRecord.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ReturnRecordFindFirstOrThrowArgs>(args?: SelectSubset<T, ReturnRecordFindFirstOrThrowArgs<ExtArgs>>): Prisma__ReturnRecordClient<$Result.GetResult<Prisma.$ReturnRecordPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ReturnRecords that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReturnRecordFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ReturnRecords
+     * const returnRecords = await prisma.returnRecord.findMany()
+     * 
+     * // Get first 10 ReturnRecords
+     * const returnRecords = await prisma.returnRecord.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const returnRecordWithIdOnly = await prisma.returnRecord.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ReturnRecordFindManyArgs>(args?: SelectSubset<T, ReturnRecordFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReturnRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ReturnRecord.
+     * @param {ReturnRecordCreateArgs} args - Arguments to create a ReturnRecord.
+     * @example
+     * // Create one ReturnRecord
+     * const ReturnRecord = await prisma.returnRecord.create({
+     *   data: {
+     *     // ... data to create a ReturnRecord
+     *   }
+     * })
+     * 
+     */
+    create<T extends ReturnRecordCreateArgs>(args: SelectSubset<T, ReturnRecordCreateArgs<ExtArgs>>): Prisma__ReturnRecordClient<$Result.GetResult<Prisma.$ReturnRecordPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ReturnRecords.
+     * @param {ReturnRecordCreateManyArgs} args - Arguments to create many ReturnRecords.
+     * @example
+     * // Create many ReturnRecords
+     * const returnRecord = await prisma.returnRecord.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ReturnRecordCreateManyArgs>(args?: SelectSubset<T, ReturnRecordCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ReturnRecords and returns the data saved in the database.
+     * @param {ReturnRecordCreateManyAndReturnArgs} args - Arguments to create many ReturnRecords.
+     * @example
+     * // Create many ReturnRecords
+     * const returnRecord = await prisma.returnRecord.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ReturnRecords and only return the `id`
+     * const returnRecordWithIdOnly = await prisma.returnRecord.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ReturnRecordCreateManyAndReturnArgs>(args?: SelectSubset<T, ReturnRecordCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReturnRecordPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ReturnRecord.
+     * @param {ReturnRecordDeleteArgs} args - Arguments to delete one ReturnRecord.
+     * @example
+     * // Delete one ReturnRecord
+     * const ReturnRecord = await prisma.returnRecord.delete({
+     *   where: {
+     *     // ... filter to delete one ReturnRecord
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ReturnRecordDeleteArgs>(args: SelectSubset<T, ReturnRecordDeleteArgs<ExtArgs>>): Prisma__ReturnRecordClient<$Result.GetResult<Prisma.$ReturnRecordPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ReturnRecord.
+     * @param {ReturnRecordUpdateArgs} args - Arguments to update one ReturnRecord.
+     * @example
+     * // Update one ReturnRecord
+     * const returnRecord = await prisma.returnRecord.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ReturnRecordUpdateArgs>(args: SelectSubset<T, ReturnRecordUpdateArgs<ExtArgs>>): Prisma__ReturnRecordClient<$Result.GetResult<Prisma.$ReturnRecordPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ReturnRecords.
+     * @param {ReturnRecordDeleteManyArgs} args - Arguments to filter ReturnRecords to delete.
+     * @example
+     * // Delete a few ReturnRecords
+     * const { count } = await prisma.returnRecord.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ReturnRecordDeleteManyArgs>(args?: SelectSubset<T, ReturnRecordDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ReturnRecords.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReturnRecordUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ReturnRecords
+     * const returnRecord = await prisma.returnRecord.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ReturnRecordUpdateManyArgs>(args: SelectSubset<T, ReturnRecordUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ReturnRecords and returns the data updated in the database.
+     * @param {ReturnRecordUpdateManyAndReturnArgs} args - Arguments to update many ReturnRecords.
+     * @example
+     * // Update many ReturnRecords
+     * const returnRecord = await prisma.returnRecord.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ReturnRecords and only return the `id`
+     * const returnRecordWithIdOnly = await prisma.returnRecord.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ReturnRecordUpdateManyAndReturnArgs>(args: SelectSubset<T, ReturnRecordUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReturnRecordPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ReturnRecord.
+     * @param {ReturnRecordUpsertArgs} args - Arguments to update or create a ReturnRecord.
+     * @example
+     * // Update or create a ReturnRecord
+     * const returnRecord = await prisma.returnRecord.upsert({
+     *   create: {
+     *     // ... data to create a ReturnRecord
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ReturnRecord we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ReturnRecordUpsertArgs>(args: SelectSubset<T, ReturnRecordUpsertArgs<ExtArgs>>): Prisma__ReturnRecordClient<$Result.GetResult<Prisma.$ReturnRecordPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ReturnRecords.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReturnRecordCountArgs} args - Arguments to filter ReturnRecords to count.
+     * @example
+     * // Count the number of ReturnRecords
+     * const count = await prisma.returnRecord.count({
+     *   where: {
+     *     // ... the filter for the ReturnRecords we want to count
+     *   }
+     * })
+    **/
+    count<T extends ReturnRecordCountArgs>(
+      args?: Subset<T, ReturnRecordCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ReturnRecordCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ReturnRecord.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReturnRecordAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ReturnRecordAggregateArgs>(args: Subset<T, ReturnRecordAggregateArgs>): Prisma.PrismaPromise<GetReturnRecordAggregateType<T>>
+
+    /**
+     * Group by ReturnRecord.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReturnRecordGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ReturnRecordGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ReturnRecordGroupByArgs['orderBy'] }
+        : { orderBy?: ReturnRecordGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ReturnRecordGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetReturnRecordGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ReturnRecord model
+   */
+  readonly fields: ReturnRecordFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ReturnRecord.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ReturnRecordClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ReturnRecord model
+   */
+  interface ReturnRecordFieldRefs {
+    readonly id: FieldRef<"ReturnRecord", 'String'>
+    readonly returnNumber: FieldRef<"ReturnRecord", 'String'>
+    readonly type: FieldRef<"ReturnRecord", 'String'>
+    readonly referenceNumber: FieldRef<"ReturnRecord", 'String'>
+    readonly customerOrSupplier: FieldRef<"ReturnRecord", 'String'>
+    readonly items: FieldRef<"ReturnRecord", 'String'>
+    readonly totalAmount: FieldRef<"ReturnRecord", 'Float'>
+    readonly reason: FieldRef<"ReturnRecord", 'String'>
+    readonly recordedBy: FieldRef<"ReturnRecord", 'String'>
+    readonly createdAt: FieldRef<"ReturnRecord", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ReturnRecord findUnique
+   */
+  export type ReturnRecordFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReturnRecord
+     */
+    select?: ReturnRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReturnRecord
+     */
+    omit?: ReturnRecordOmit<ExtArgs> | null
+    /**
+     * Filter, which ReturnRecord to fetch.
+     */
+    where: ReturnRecordWhereUniqueInput
+  }
+
+  /**
+   * ReturnRecord findUniqueOrThrow
+   */
+  export type ReturnRecordFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReturnRecord
+     */
+    select?: ReturnRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReturnRecord
+     */
+    omit?: ReturnRecordOmit<ExtArgs> | null
+    /**
+     * Filter, which ReturnRecord to fetch.
+     */
+    where: ReturnRecordWhereUniqueInput
+  }
+
+  /**
+   * ReturnRecord findFirst
+   */
+  export type ReturnRecordFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReturnRecord
+     */
+    select?: ReturnRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReturnRecord
+     */
+    omit?: ReturnRecordOmit<ExtArgs> | null
+    /**
+     * Filter, which ReturnRecord to fetch.
+     */
+    where?: ReturnRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ReturnRecords to fetch.
+     */
+    orderBy?: ReturnRecordOrderByWithRelationInput | ReturnRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ReturnRecords.
+     */
+    cursor?: ReturnRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ReturnRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ReturnRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ReturnRecords.
+     */
+    distinct?: ReturnRecordScalarFieldEnum | ReturnRecordScalarFieldEnum[]
+  }
+
+  /**
+   * ReturnRecord findFirstOrThrow
+   */
+  export type ReturnRecordFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReturnRecord
+     */
+    select?: ReturnRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReturnRecord
+     */
+    omit?: ReturnRecordOmit<ExtArgs> | null
+    /**
+     * Filter, which ReturnRecord to fetch.
+     */
+    where?: ReturnRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ReturnRecords to fetch.
+     */
+    orderBy?: ReturnRecordOrderByWithRelationInput | ReturnRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ReturnRecords.
+     */
+    cursor?: ReturnRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ReturnRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ReturnRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ReturnRecords.
+     */
+    distinct?: ReturnRecordScalarFieldEnum | ReturnRecordScalarFieldEnum[]
+  }
+
+  /**
+   * ReturnRecord findMany
+   */
+  export type ReturnRecordFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReturnRecord
+     */
+    select?: ReturnRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReturnRecord
+     */
+    omit?: ReturnRecordOmit<ExtArgs> | null
+    /**
+     * Filter, which ReturnRecords to fetch.
+     */
+    where?: ReturnRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ReturnRecords to fetch.
+     */
+    orderBy?: ReturnRecordOrderByWithRelationInput | ReturnRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ReturnRecords.
+     */
+    cursor?: ReturnRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ReturnRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ReturnRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ReturnRecords.
+     */
+    distinct?: ReturnRecordScalarFieldEnum | ReturnRecordScalarFieldEnum[]
+  }
+
+  /**
+   * ReturnRecord create
+   */
+  export type ReturnRecordCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReturnRecord
+     */
+    select?: ReturnRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReturnRecord
+     */
+    omit?: ReturnRecordOmit<ExtArgs> | null
+    /**
+     * The data needed to create a ReturnRecord.
+     */
+    data: XOR<ReturnRecordCreateInput, ReturnRecordUncheckedCreateInput>
+  }
+
+  /**
+   * ReturnRecord createMany
+   */
+  export type ReturnRecordCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ReturnRecords.
+     */
+    data: ReturnRecordCreateManyInput | ReturnRecordCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ReturnRecord createManyAndReturn
+   */
+  export type ReturnRecordCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReturnRecord
+     */
+    select?: ReturnRecordSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReturnRecord
+     */
+    omit?: ReturnRecordOmit<ExtArgs> | null
+    /**
+     * The data used to create many ReturnRecords.
+     */
+    data: ReturnRecordCreateManyInput | ReturnRecordCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ReturnRecord update
+   */
+  export type ReturnRecordUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReturnRecord
+     */
+    select?: ReturnRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReturnRecord
+     */
+    omit?: ReturnRecordOmit<ExtArgs> | null
+    /**
+     * The data needed to update a ReturnRecord.
+     */
+    data: XOR<ReturnRecordUpdateInput, ReturnRecordUncheckedUpdateInput>
+    /**
+     * Choose, which ReturnRecord to update.
+     */
+    where: ReturnRecordWhereUniqueInput
+  }
+
+  /**
+   * ReturnRecord updateMany
+   */
+  export type ReturnRecordUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ReturnRecords.
+     */
+    data: XOR<ReturnRecordUpdateManyMutationInput, ReturnRecordUncheckedUpdateManyInput>
+    /**
+     * Filter which ReturnRecords to update
+     */
+    where?: ReturnRecordWhereInput
+    /**
+     * Limit how many ReturnRecords to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ReturnRecord updateManyAndReturn
+   */
+  export type ReturnRecordUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReturnRecord
+     */
+    select?: ReturnRecordSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReturnRecord
+     */
+    omit?: ReturnRecordOmit<ExtArgs> | null
+    /**
+     * The data used to update ReturnRecords.
+     */
+    data: XOR<ReturnRecordUpdateManyMutationInput, ReturnRecordUncheckedUpdateManyInput>
+    /**
+     * Filter which ReturnRecords to update
+     */
+    where?: ReturnRecordWhereInput
+    /**
+     * Limit how many ReturnRecords to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ReturnRecord upsert
+   */
+  export type ReturnRecordUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReturnRecord
+     */
+    select?: ReturnRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReturnRecord
+     */
+    omit?: ReturnRecordOmit<ExtArgs> | null
+    /**
+     * The filter to search for the ReturnRecord to update in case it exists.
+     */
+    where: ReturnRecordWhereUniqueInput
+    /**
+     * In case the ReturnRecord found by the `where` argument doesn't exist, create a new ReturnRecord with this data.
+     */
+    create: XOR<ReturnRecordCreateInput, ReturnRecordUncheckedCreateInput>
+    /**
+     * In case the ReturnRecord was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ReturnRecordUpdateInput, ReturnRecordUncheckedUpdateInput>
+  }
+
+  /**
+   * ReturnRecord delete
+   */
+  export type ReturnRecordDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReturnRecord
+     */
+    select?: ReturnRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReturnRecord
+     */
+    omit?: ReturnRecordOmit<ExtArgs> | null
+    /**
+     * Filter which ReturnRecord to delete.
+     */
+    where: ReturnRecordWhereUniqueInput
+  }
+
+  /**
+   * ReturnRecord deleteMany
+   */
+  export type ReturnRecordDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ReturnRecords to delete
+     */
+    where?: ReturnRecordWhereInput
+    /**
+     * Limit how many ReturnRecords to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ReturnRecord without action
+   */
+  export type ReturnRecordDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReturnRecord
+     */
+    select?: ReturnRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReturnRecord
+     */
+    omit?: ReturnRecordOmit<ExtArgs> | null
   }
 
 
@@ -18102,11 +19412,13 @@ export namespace Prisma {
   export type SystemSettingsAvgAggregateOutputType = {
     freeDeliveryThreshold: number | null
     expressMinutes: number | null
+    pluDigits: number | null
   }
 
   export type SystemSettingsSumAggregateOutputType = {
     freeDeliveryThreshold: number | null
     expressMinutes: number | null
+    pluDigits: number | null
   }
 
   export type SystemSettingsMinAggregateOutputType = {
@@ -18118,11 +19430,16 @@ export namespace Prisma {
     hotlines: string | null
     whatsapp: string | null
     address: string | null
+    taxNumber: string | null
+    commercialReg: string | null
     freeDeliveryThreshold: number | null
     expressDeliveryEnabled: boolean | null
     expressMinutes: number | null
     isLockedDown: boolean | null
     bannerNotice: string | null
+    weightPrefixes: string | null
+    pricePrefixes: string | null
+    pluDigits: number | null
     updatedAt: Date | null
   }
 
@@ -18135,11 +19452,16 @@ export namespace Prisma {
     hotlines: string | null
     whatsapp: string | null
     address: string | null
+    taxNumber: string | null
+    commercialReg: string | null
     freeDeliveryThreshold: number | null
     expressDeliveryEnabled: boolean | null
     expressMinutes: number | null
     isLockedDown: boolean | null
     bannerNotice: string | null
+    weightPrefixes: string | null
+    pricePrefixes: string | null
+    pluDigits: number | null
     updatedAt: Date | null
   }
 
@@ -18152,11 +19474,16 @@ export namespace Prisma {
     hotlines: number
     whatsapp: number
     address: number
+    taxNumber: number
+    commercialReg: number
     freeDeliveryThreshold: number
     expressDeliveryEnabled: number
     expressMinutes: number
     isLockedDown: number
     bannerNotice: number
+    weightPrefixes: number
+    pricePrefixes: number
+    pluDigits: number
     updatedAt: number
     _all: number
   }
@@ -18165,11 +19492,13 @@ export namespace Prisma {
   export type SystemSettingsAvgAggregateInputType = {
     freeDeliveryThreshold?: true
     expressMinutes?: true
+    pluDigits?: true
   }
 
   export type SystemSettingsSumAggregateInputType = {
     freeDeliveryThreshold?: true
     expressMinutes?: true
+    pluDigits?: true
   }
 
   export type SystemSettingsMinAggregateInputType = {
@@ -18181,11 +19510,16 @@ export namespace Prisma {
     hotlines?: true
     whatsapp?: true
     address?: true
+    taxNumber?: true
+    commercialReg?: true
     freeDeliveryThreshold?: true
     expressDeliveryEnabled?: true
     expressMinutes?: true
     isLockedDown?: true
     bannerNotice?: true
+    weightPrefixes?: true
+    pricePrefixes?: true
+    pluDigits?: true
     updatedAt?: true
   }
 
@@ -18198,11 +19532,16 @@ export namespace Prisma {
     hotlines?: true
     whatsapp?: true
     address?: true
+    taxNumber?: true
+    commercialReg?: true
     freeDeliveryThreshold?: true
     expressDeliveryEnabled?: true
     expressMinutes?: true
     isLockedDown?: true
     bannerNotice?: true
+    weightPrefixes?: true
+    pricePrefixes?: true
+    pluDigits?: true
     updatedAt?: true
   }
 
@@ -18215,11 +19554,16 @@ export namespace Prisma {
     hotlines?: true
     whatsapp?: true
     address?: true
+    taxNumber?: true
+    commercialReg?: true
     freeDeliveryThreshold?: true
     expressDeliveryEnabled?: true
     expressMinutes?: true
     isLockedDown?: true
     bannerNotice?: true
+    weightPrefixes?: true
+    pricePrefixes?: true
+    pluDigits?: true
     updatedAt?: true
     _all?: true
   }
@@ -18319,11 +19663,16 @@ export namespace Prisma {
     hotlines: string
     whatsapp: string
     address: string
+    taxNumber: string
+    commercialReg: string
     freeDeliveryThreshold: number
     expressDeliveryEnabled: boolean
     expressMinutes: number
     isLockedDown: boolean
     bannerNotice: string | null
+    weightPrefixes: string
+    pricePrefixes: string
+    pluDigits: number
     updatedAt: Date
     _count: SystemSettingsCountAggregateOutputType | null
     _avg: SystemSettingsAvgAggregateOutputType | null
@@ -18355,11 +19704,16 @@ export namespace Prisma {
     hotlines?: boolean
     whatsapp?: boolean
     address?: boolean
+    taxNumber?: boolean
+    commercialReg?: boolean
     freeDeliveryThreshold?: boolean
     expressDeliveryEnabled?: boolean
     expressMinutes?: boolean
     isLockedDown?: boolean
     bannerNotice?: boolean
+    weightPrefixes?: boolean
+    pricePrefixes?: boolean
+    pluDigits?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -18372,11 +19726,16 @@ export namespace Prisma {
     hotlines?: boolean
     whatsapp?: boolean
     address?: boolean
+    taxNumber?: boolean
+    commercialReg?: boolean
     freeDeliveryThreshold?: boolean
     expressDeliveryEnabled?: boolean
     expressMinutes?: boolean
     isLockedDown?: boolean
     bannerNotice?: boolean
+    weightPrefixes?: boolean
+    pricePrefixes?: boolean
+    pluDigits?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -18389,11 +19748,16 @@ export namespace Prisma {
     hotlines?: boolean
     whatsapp?: boolean
     address?: boolean
+    taxNumber?: boolean
+    commercialReg?: boolean
     freeDeliveryThreshold?: boolean
     expressDeliveryEnabled?: boolean
     expressMinutes?: boolean
     isLockedDown?: boolean
     bannerNotice?: boolean
+    weightPrefixes?: boolean
+    pricePrefixes?: boolean
+    pluDigits?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -18406,15 +19770,20 @@ export namespace Prisma {
     hotlines?: boolean
     whatsapp?: boolean
     address?: boolean
+    taxNumber?: boolean
+    commercialReg?: boolean
     freeDeliveryThreshold?: boolean
     expressDeliveryEnabled?: boolean
     expressMinutes?: boolean
     isLockedDown?: boolean
     bannerNotice?: boolean
+    weightPrefixes?: boolean
+    pricePrefixes?: boolean
+    pluDigits?: boolean
     updatedAt?: boolean
   }
 
-  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "storeName" | "tagline" | "mainBranch" | "phone" | "hotlines" | "whatsapp" | "address" | "freeDeliveryThreshold" | "expressDeliveryEnabled" | "expressMinutes" | "isLockedDown" | "bannerNotice" | "updatedAt", ExtArgs["result"]["systemSettings"]>
+  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "storeName" | "tagline" | "mainBranch" | "phone" | "hotlines" | "whatsapp" | "address" | "taxNumber" | "commercialReg" | "freeDeliveryThreshold" | "expressDeliveryEnabled" | "expressMinutes" | "isLockedDown" | "bannerNotice" | "weightPrefixes" | "pricePrefixes" | "pluDigits" | "updatedAt", ExtArgs["result"]["systemSettings"]>
 
   export type $SystemSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SystemSettings"
@@ -18428,11 +19797,16 @@ export namespace Prisma {
       hotlines: string
       whatsapp: string
       address: string
+      taxNumber: string
+      commercialReg: string
       freeDeliveryThreshold: number
       expressDeliveryEnabled: boolean
       expressMinutes: number
       isLockedDown: boolean
       bannerNotice: string | null
+      weightPrefixes: string
+      pricePrefixes: string
+      pluDigits: number
       updatedAt: Date
     }, ExtArgs["result"]["systemSettings"]>
     composites: {}
@@ -18865,11 +20239,16 @@ export namespace Prisma {
     readonly hotlines: FieldRef<"SystemSettings", 'String'>
     readonly whatsapp: FieldRef<"SystemSettings", 'String'>
     readonly address: FieldRef<"SystemSettings", 'String'>
+    readonly taxNumber: FieldRef<"SystemSettings", 'String'>
+    readonly commercialReg: FieldRef<"SystemSettings", 'String'>
     readonly freeDeliveryThreshold: FieldRef<"SystemSettings", 'Float'>
     readonly expressDeliveryEnabled: FieldRef<"SystemSettings", 'Boolean'>
     readonly expressMinutes: FieldRef<"SystemSettings", 'Int'>
     readonly isLockedDown: FieldRef<"SystemSettings", 'Boolean'>
     readonly bannerNotice: FieldRef<"SystemSettings", 'String'>
+    readonly weightPrefixes: FieldRef<"SystemSettings", 'String'>
+    readonly pricePrefixes: FieldRef<"SystemSettings", 'String'>
+    readonly pluDigits: FieldRef<"SystemSettings", 'Int'>
     readonly updatedAt: FieldRef<"SystemSettings", 'DateTime'>
   }
     
@@ -20375,6 +21754,9 @@ export namespace Prisma {
     isOffer: 'isOffer',
     isExpress: 'isExpress',
     isWeighted: 'isWeighted',
+    scaleItemCode: 'scaleItemCode',
+    shelfLifeDays: 'shelfLifeDays',
+    scaleTareWeight: 'scaleTareWeight',
     inStock: 'inStock',
     stockQty: 'stockQty',
     minStockQty: 'minStockQty',
@@ -20410,6 +21792,7 @@ export namespace Prisma {
     captainPhone: 'captainPhone',
     assignedPicker: 'assignedPicker',
     timeline: 'timeline',
+    isSettled: 'isSettled',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -20438,6 +21821,7 @@ export namespace Prisma {
     phone: 'phone',
     vehicle: 'vehicle',
     zone: 'zone',
+    pendingBalance: 'pendingBalance',
     isActive: 'isActive',
     createdAt: 'createdAt'
   };
@@ -20486,6 +21870,7 @@ export namespace Prisma {
     paidAmount: 'paidAmount',
     remainingAmount: 'remainingAmount',
     paymentType: 'paymentType',
+    status: 'status',
     notes: 'notes',
     receivedBy: 'receivedBy',
     createdAt: 'createdAt'
@@ -20528,6 +21913,22 @@ export namespace Prisma {
   export type StockMovementScalarFieldEnum = (typeof StockMovementScalarFieldEnum)[keyof typeof StockMovementScalarFieldEnum]
 
 
+  export const ReturnRecordScalarFieldEnum: {
+    id: 'id',
+    returnNumber: 'returnNumber',
+    type: 'type',
+    referenceNumber: 'referenceNumber',
+    customerOrSupplier: 'customerOrSupplier',
+    items: 'items',
+    totalAmount: 'totalAmount',
+    reason: 'reason',
+    recordedBy: 'recordedBy',
+    createdAt: 'createdAt'
+  };
+
+  export type ReturnRecordScalarFieldEnum = (typeof ReturnRecordScalarFieldEnum)[keyof typeof ReturnRecordScalarFieldEnum]
+
+
   export const TreasuryTransactionScalarFieldEnum: {
     id: 'id',
     type: 'type',
@@ -20567,11 +21968,16 @@ export namespace Prisma {
     hotlines: 'hotlines',
     whatsapp: 'whatsapp',
     address: 'address',
+    taxNumber: 'taxNumber',
+    commercialReg: 'commercialReg',
     freeDeliveryThreshold: 'freeDeliveryThreshold',
     expressDeliveryEnabled: 'expressDeliveryEnabled',
     expressMinutes: 'expressMinutes',
     isLockedDown: 'isLockedDown',
     bannerNotice: 'bannerNotice',
+    weightPrefixes: 'weightPrefixes',
+    pricePrefixes: 'pricePrefixes',
+    pluDigits: 'pluDigits',
     updatedAt: 'updatedAt'
   };
 
@@ -20921,6 +22327,9 @@ export namespace Prisma {
     isOffer?: BoolFilter<"Product"> | boolean
     isExpress?: BoolFilter<"Product"> | boolean
     isWeighted?: BoolFilter<"Product"> | boolean
+    scaleItemCode?: StringNullableFilter<"Product"> | string | null
+    shelfLifeDays?: IntFilter<"Product"> | number
+    scaleTareWeight?: FloatFilter<"Product"> | number
     inStock?: BoolFilter<"Product"> | boolean
     stockQty?: IntFilter<"Product"> | number
     minStockQty?: IntFilter<"Product"> | number
@@ -20945,6 +22354,9 @@ export namespace Prisma {
     isOffer?: SortOrder
     isExpress?: SortOrder
     isWeighted?: SortOrder
+    scaleItemCode?: SortOrderInput | SortOrder
+    shelfLifeDays?: SortOrder
+    scaleTareWeight?: SortOrder
     inStock?: SortOrder
     stockQty?: SortOrder
     minStockQty?: SortOrder
@@ -20972,6 +22384,9 @@ export namespace Prisma {
     isOffer?: BoolFilter<"Product"> | boolean
     isExpress?: BoolFilter<"Product"> | boolean
     isWeighted?: BoolFilter<"Product"> | boolean
+    scaleItemCode?: StringNullableFilter<"Product"> | string | null
+    shelfLifeDays?: IntFilter<"Product"> | number
+    scaleTareWeight?: FloatFilter<"Product"> | number
     inStock?: BoolFilter<"Product"> | boolean
     stockQty?: IntFilter<"Product"> | number
     minStockQty?: IntFilter<"Product"> | number
@@ -20996,6 +22411,9 @@ export namespace Prisma {
     isOffer?: SortOrder
     isExpress?: SortOrder
     isWeighted?: SortOrder
+    scaleItemCode?: SortOrderInput | SortOrder
+    shelfLifeDays?: SortOrder
+    scaleTareWeight?: SortOrder
     inStock?: SortOrder
     stockQty?: SortOrder
     minStockQty?: SortOrder
@@ -21028,6 +22446,9 @@ export namespace Prisma {
     isOffer?: BoolWithAggregatesFilter<"Product"> | boolean
     isExpress?: BoolWithAggregatesFilter<"Product"> | boolean
     isWeighted?: BoolWithAggregatesFilter<"Product"> | boolean
+    scaleItemCode?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    shelfLifeDays?: IntWithAggregatesFilter<"Product"> | number
+    scaleTareWeight?: FloatWithAggregatesFilter<"Product"> | number
     inStock?: BoolWithAggregatesFilter<"Product"> | boolean
     stockQty?: IntWithAggregatesFilter<"Product"> | number
     minStockQty?: IntWithAggregatesFilter<"Product"> | number
@@ -21063,6 +22484,7 @@ export namespace Prisma {
     captainPhone?: StringNullableFilter<"Order"> | string | null
     assignedPicker?: StringNullableFilter<"Order"> | string | null
     timeline?: StringFilter<"Order"> | string
+    isSettled?: BoolFilter<"Order"> | boolean
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
   }
@@ -21089,6 +22511,7 @@ export namespace Prisma {
     captainPhone?: SortOrderInput | SortOrder
     assignedPicker?: SortOrderInput | SortOrder
     timeline?: SortOrder
+    isSettled?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -21118,6 +22541,7 @@ export namespace Prisma {
     captainPhone?: StringNullableFilter<"Order"> | string | null
     assignedPicker?: StringNullableFilter<"Order"> | string | null
     timeline?: StringFilter<"Order"> | string
+    isSettled?: BoolFilter<"Order"> | boolean
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
   }, "id" | "orderNumber">
@@ -21144,6 +22568,7 @@ export namespace Prisma {
     captainPhone?: SortOrderInput | SortOrder
     assignedPicker?: SortOrderInput | SortOrder
     timeline?: SortOrder
+    isSettled?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: OrderCountOrderByAggregateInput
@@ -21178,6 +22603,7 @@ export namespace Prisma {
     captainPhone?: StringNullableWithAggregatesFilter<"Order"> | string | null
     assignedPicker?: StringNullableWithAggregatesFilter<"Order"> | string | null
     timeline?: StringWithAggregatesFilter<"Order"> | string
+    isSettled?: BoolWithAggregatesFilter<"Order"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
   }
@@ -21265,6 +22691,7 @@ export namespace Prisma {
     phone?: StringFilter<"Captain"> | string
     vehicle?: StringFilter<"Captain"> | string
     zone?: StringFilter<"Captain"> | string
+    pendingBalance?: FloatFilter<"Captain"> | number
     isActive?: BoolFilter<"Captain"> | boolean
     createdAt?: DateTimeFilter<"Captain"> | Date | string
   }
@@ -21275,6 +22702,7 @@ export namespace Prisma {
     phone?: SortOrder
     vehicle?: SortOrder
     zone?: SortOrder
+    pendingBalance?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
   }
@@ -21288,6 +22716,7 @@ export namespace Prisma {
     name?: StringFilter<"Captain"> | string
     vehicle?: StringFilter<"Captain"> | string
     zone?: StringFilter<"Captain"> | string
+    pendingBalance?: FloatFilter<"Captain"> | number
     isActive?: BoolFilter<"Captain"> | boolean
     createdAt?: DateTimeFilter<"Captain"> | Date | string
   }, "id" | "phone">
@@ -21298,11 +22727,14 @@ export namespace Prisma {
     phone?: SortOrder
     vehicle?: SortOrder
     zone?: SortOrder
+    pendingBalance?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     _count?: CaptainCountOrderByAggregateInput
+    _avg?: CaptainAvgOrderByAggregateInput
     _max?: CaptainMaxOrderByAggregateInput
     _min?: CaptainMinOrderByAggregateInput
+    _sum?: CaptainSumOrderByAggregateInput
   }
 
   export type CaptainScalarWhereWithAggregatesInput = {
@@ -21314,6 +22746,7 @@ export namespace Prisma {
     phone?: StringWithAggregatesFilter<"Captain"> | string
     vehicle?: StringWithAggregatesFilter<"Captain"> | string
     zone?: StringWithAggregatesFilter<"Captain"> | string
+    pendingBalance?: FloatWithAggregatesFilter<"Captain"> | number
     isActive?: BoolWithAggregatesFilter<"Captain"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Captain"> | Date | string
   }
@@ -21486,6 +22919,7 @@ export namespace Prisma {
     paidAmount?: FloatFilter<"Purchase"> | number
     remainingAmount?: FloatFilter<"Purchase"> | number
     paymentType?: StringFilter<"Purchase"> | string
+    status?: StringFilter<"Purchase"> | string
     notes?: StringNullableFilter<"Purchase"> | string | null
     receivedBy?: StringNullableFilter<"Purchase"> | string | null
     createdAt?: DateTimeFilter<"Purchase"> | Date | string
@@ -21503,6 +22937,7 @@ export namespace Prisma {
     paidAmount?: SortOrder
     remainingAmount?: SortOrder
     paymentType?: SortOrder
+    status?: SortOrder
     notes?: SortOrderInput | SortOrder
     receivedBy?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -21523,6 +22958,7 @@ export namespace Prisma {
     paidAmount?: FloatFilter<"Purchase"> | number
     remainingAmount?: FloatFilter<"Purchase"> | number
     paymentType?: StringFilter<"Purchase"> | string
+    status?: StringFilter<"Purchase"> | string
     notes?: StringNullableFilter<"Purchase"> | string | null
     receivedBy?: StringNullableFilter<"Purchase"> | string | null
     createdAt?: DateTimeFilter<"Purchase"> | Date | string
@@ -21540,6 +22976,7 @@ export namespace Prisma {
     paidAmount?: SortOrder
     remainingAmount?: SortOrder
     paymentType?: SortOrder
+    status?: SortOrder
     notes?: SortOrderInput | SortOrder
     receivedBy?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -21564,6 +23001,7 @@ export namespace Prisma {
     paidAmount?: FloatWithAggregatesFilter<"Purchase"> | number
     remainingAmount?: FloatWithAggregatesFilter<"Purchase"> | number
     paymentType?: StringWithAggregatesFilter<"Purchase"> | string
+    status?: StringWithAggregatesFilter<"Purchase"> | string
     notes?: StringNullableWithAggregatesFilter<"Purchase"> | string | null
     receivedBy?: StringNullableWithAggregatesFilter<"Purchase"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Purchase"> | Date | string
@@ -21664,8 +23102,8 @@ export namespace Prisma {
     productId?: StringFilter<"StockMovement"> | string
     productName?: StringFilter<"StockMovement"> | string
     movementType?: StringFilter<"StockMovement"> | string
-    quantity?: IntFilter<"StockMovement"> | number
-    balanceAfter?: IntFilter<"StockMovement"> | number
+    quantity?: FloatFilter<"StockMovement"> | number
+    balanceAfter?: FloatFilter<"StockMovement"> | number
     unitCost?: FloatNullableFilter<"StockMovement"> | number | null
     reference?: StringNullableFilter<"StockMovement"> | string | null
     notes?: StringNullableFilter<"StockMovement"> | string | null
@@ -21695,8 +23133,8 @@ export namespace Prisma {
     productId?: StringFilter<"StockMovement"> | string
     productName?: StringFilter<"StockMovement"> | string
     movementType?: StringFilter<"StockMovement"> | string
-    quantity?: IntFilter<"StockMovement"> | number
-    balanceAfter?: IntFilter<"StockMovement"> | number
+    quantity?: FloatFilter<"StockMovement"> | number
+    balanceAfter?: FloatFilter<"StockMovement"> | number
     unitCost?: FloatNullableFilter<"StockMovement"> | number | null
     reference?: StringNullableFilter<"StockMovement"> | string | null
     notes?: StringNullableFilter<"StockMovement"> | string | null
@@ -21731,13 +23169,92 @@ export namespace Prisma {
     productId?: StringWithAggregatesFilter<"StockMovement"> | string
     productName?: StringWithAggregatesFilter<"StockMovement"> | string
     movementType?: StringWithAggregatesFilter<"StockMovement"> | string
-    quantity?: IntWithAggregatesFilter<"StockMovement"> | number
-    balanceAfter?: IntWithAggregatesFilter<"StockMovement"> | number
+    quantity?: FloatWithAggregatesFilter<"StockMovement"> | number
+    balanceAfter?: FloatWithAggregatesFilter<"StockMovement"> | number
     unitCost?: FloatNullableWithAggregatesFilter<"StockMovement"> | number | null
     reference?: StringNullableWithAggregatesFilter<"StockMovement"> | string | null
     notes?: StringNullableWithAggregatesFilter<"StockMovement"> | string | null
     performedBy?: StringNullableWithAggregatesFilter<"StockMovement"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"StockMovement"> | Date | string
+  }
+
+  export type ReturnRecordWhereInput = {
+    AND?: ReturnRecordWhereInput | ReturnRecordWhereInput[]
+    OR?: ReturnRecordWhereInput[]
+    NOT?: ReturnRecordWhereInput | ReturnRecordWhereInput[]
+    id?: StringFilter<"ReturnRecord"> | string
+    returnNumber?: StringFilter<"ReturnRecord"> | string
+    type?: StringFilter<"ReturnRecord"> | string
+    referenceNumber?: StringFilter<"ReturnRecord"> | string
+    customerOrSupplier?: StringFilter<"ReturnRecord"> | string
+    items?: StringFilter<"ReturnRecord"> | string
+    totalAmount?: FloatFilter<"ReturnRecord"> | number
+    reason?: StringNullableFilter<"ReturnRecord"> | string | null
+    recordedBy?: StringNullableFilter<"ReturnRecord"> | string | null
+    createdAt?: DateTimeFilter<"ReturnRecord"> | Date | string
+  }
+
+  export type ReturnRecordOrderByWithRelationInput = {
+    id?: SortOrder
+    returnNumber?: SortOrder
+    type?: SortOrder
+    referenceNumber?: SortOrder
+    customerOrSupplier?: SortOrder
+    items?: SortOrder
+    totalAmount?: SortOrder
+    reason?: SortOrderInput | SortOrder
+    recordedBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ReturnRecordWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    returnNumber?: string
+    AND?: ReturnRecordWhereInput | ReturnRecordWhereInput[]
+    OR?: ReturnRecordWhereInput[]
+    NOT?: ReturnRecordWhereInput | ReturnRecordWhereInput[]
+    type?: StringFilter<"ReturnRecord"> | string
+    referenceNumber?: StringFilter<"ReturnRecord"> | string
+    customerOrSupplier?: StringFilter<"ReturnRecord"> | string
+    items?: StringFilter<"ReturnRecord"> | string
+    totalAmount?: FloatFilter<"ReturnRecord"> | number
+    reason?: StringNullableFilter<"ReturnRecord"> | string | null
+    recordedBy?: StringNullableFilter<"ReturnRecord"> | string | null
+    createdAt?: DateTimeFilter<"ReturnRecord"> | Date | string
+  }, "id" | "returnNumber">
+
+  export type ReturnRecordOrderByWithAggregationInput = {
+    id?: SortOrder
+    returnNumber?: SortOrder
+    type?: SortOrder
+    referenceNumber?: SortOrder
+    customerOrSupplier?: SortOrder
+    items?: SortOrder
+    totalAmount?: SortOrder
+    reason?: SortOrderInput | SortOrder
+    recordedBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: ReturnRecordCountOrderByAggregateInput
+    _avg?: ReturnRecordAvgOrderByAggregateInput
+    _max?: ReturnRecordMaxOrderByAggregateInput
+    _min?: ReturnRecordMinOrderByAggregateInput
+    _sum?: ReturnRecordSumOrderByAggregateInput
+  }
+
+  export type ReturnRecordScalarWhereWithAggregatesInput = {
+    AND?: ReturnRecordScalarWhereWithAggregatesInput | ReturnRecordScalarWhereWithAggregatesInput[]
+    OR?: ReturnRecordScalarWhereWithAggregatesInput[]
+    NOT?: ReturnRecordScalarWhereWithAggregatesInput | ReturnRecordScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ReturnRecord"> | string
+    returnNumber?: StringWithAggregatesFilter<"ReturnRecord"> | string
+    type?: StringWithAggregatesFilter<"ReturnRecord"> | string
+    referenceNumber?: StringWithAggregatesFilter<"ReturnRecord"> | string
+    customerOrSupplier?: StringWithAggregatesFilter<"ReturnRecord"> | string
+    items?: StringWithAggregatesFilter<"ReturnRecord"> | string
+    totalAmount?: FloatWithAggregatesFilter<"ReturnRecord"> | number
+    reason?: StringNullableWithAggregatesFilter<"ReturnRecord"> | string | null
+    recordedBy?: StringNullableWithAggregatesFilter<"ReturnRecord"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ReturnRecord"> | Date | string
   }
 
   export type TreasuryTransactionWhereInput = {
@@ -21898,11 +23415,16 @@ export namespace Prisma {
     hotlines?: StringFilter<"SystemSettings"> | string
     whatsapp?: StringFilter<"SystemSettings"> | string
     address?: StringFilter<"SystemSettings"> | string
+    taxNumber?: StringFilter<"SystemSettings"> | string
+    commercialReg?: StringFilter<"SystemSettings"> | string
     freeDeliveryThreshold?: FloatFilter<"SystemSettings"> | number
     expressDeliveryEnabled?: BoolFilter<"SystemSettings"> | boolean
     expressMinutes?: IntFilter<"SystemSettings"> | number
     isLockedDown?: BoolFilter<"SystemSettings"> | boolean
     bannerNotice?: StringNullableFilter<"SystemSettings"> | string | null
+    weightPrefixes?: StringFilter<"SystemSettings"> | string
+    pricePrefixes?: StringFilter<"SystemSettings"> | string
+    pluDigits?: IntFilter<"SystemSettings"> | number
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }
 
@@ -21915,11 +23437,16 @@ export namespace Prisma {
     hotlines?: SortOrder
     whatsapp?: SortOrder
     address?: SortOrder
+    taxNumber?: SortOrder
+    commercialReg?: SortOrder
     freeDeliveryThreshold?: SortOrder
     expressDeliveryEnabled?: SortOrder
     expressMinutes?: SortOrder
     isLockedDown?: SortOrder
     bannerNotice?: SortOrderInput | SortOrder
+    weightPrefixes?: SortOrder
+    pricePrefixes?: SortOrder
+    pluDigits?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -21935,11 +23462,16 @@ export namespace Prisma {
     hotlines?: StringFilter<"SystemSettings"> | string
     whatsapp?: StringFilter<"SystemSettings"> | string
     address?: StringFilter<"SystemSettings"> | string
+    taxNumber?: StringFilter<"SystemSettings"> | string
+    commercialReg?: StringFilter<"SystemSettings"> | string
     freeDeliveryThreshold?: FloatFilter<"SystemSettings"> | number
     expressDeliveryEnabled?: BoolFilter<"SystemSettings"> | boolean
     expressMinutes?: IntFilter<"SystemSettings"> | number
     isLockedDown?: BoolFilter<"SystemSettings"> | boolean
     bannerNotice?: StringNullableFilter<"SystemSettings"> | string | null
+    weightPrefixes?: StringFilter<"SystemSettings"> | string
+    pricePrefixes?: StringFilter<"SystemSettings"> | string
+    pluDigits?: IntFilter<"SystemSettings"> | number
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }, "id">
 
@@ -21952,11 +23484,16 @@ export namespace Prisma {
     hotlines?: SortOrder
     whatsapp?: SortOrder
     address?: SortOrder
+    taxNumber?: SortOrder
+    commercialReg?: SortOrder
     freeDeliveryThreshold?: SortOrder
     expressDeliveryEnabled?: SortOrder
     expressMinutes?: SortOrder
     isLockedDown?: SortOrder
     bannerNotice?: SortOrderInput | SortOrder
+    weightPrefixes?: SortOrder
+    pricePrefixes?: SortOrder
+    pluDigits?: SortOrder
     updatedAt?: SortOrder
     _count?: SystemSettingsCountOrderByAggregateInput
     _avg?: SystemSettingsAvgOrderByAggregateInput
@@ -21977,11 +23514,16 @@ export namespace Prisma {
     hotlines?: StringWithAggregatesFilter<"SystemSettings"> | string
     whatsapp?: StringWithAggregatesFilter<"SystemSettings"> | string
     address?: StringWithAggregatesFilter<"SystemSettings"> | string
+    taxNumber?: StringWithAggregatesFilter<"SystemSettings"> | string
+    commercialReg?: StringWithAggregatesFilter<"SystemSettings"> | string
     freeDeliveryThreshold?: FloatWithAggregatesFilter<"SystemSettings"> | number
     expressDeliveryEnabled?: BoolWithAggregatesFilter<"SystemSettings"> | boolean
     expressMinutes?: IntWithAggregatesFilter<"SystemSettings"> | number
     isLockedDown?: BoolWithAggregatesFilter<"SystemSettings"> | boolean
     bannerNotice?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
+    weightPrefixes?: StringWithAggregatesFilter<"SystemSettings"> | string
+    pricePrefixes?: StringWithAggregatesFilter<"SystemSettings"> | string
+    pluDigits?: IntWithAggregatesFilter<"SystemSettings"> | number
     updatedAt?: DateTimeWithAggregatesFilter<"SystemSettings"> | Date | string
   }
 
@@ -22315,6 +23857,9 @@ export namespace Prisma {
     isOffer?: boolean
     isExpress?: boolean
     isWeighted?: boolean
+    scaleItemCode?: string | null
+    shelfLifeDays?: number
+    scaleTareWeight?: number
     inStock?: boolean
     stockQty?: number
     minStockQty?: number
@@ -22339,6 +23884,9 @@ export namespace Prisma {
     isOffer?: boolean
     isExpress?: boolean
     isWeighted?: boolean
+    scaleItemCode?: string | null
+    shelfLifeDays?: number
+    scaleTareWeight?: number
     inStock?: boolean
     stockQty?: number
     minStockQty?: number
@@ -22363,6 +23911,9 @@ export namespace Prisma {
     isOffer?: BoolFieldUpdateOperationsInput | boolean
     isExpress?: BoolFieldUpdateOperationsInput | boolean
     isWeighted?: BoolFieldUpdateOperationsInput | boolean
+    scaleItemCode?: NullableStringFieldUpdateOperationsInput | string | null
+    shelfLifeDays?: IntFieldUpdateOperationsInput | number
+    scaleTareWeight?: FloatFieldUpdateOperationsInput | number
     inStock?: BoolFieldUpdateOperationsInput | boolean
     stockQty?: IntFieldUpdateOperationsInput | number
     minStockQty?: IntFieldUpdateOperationsInput | number
@@ -22387,6 +23938,9 @@ export namespace Prisma {
     isOffer?: BoolFieldUpdateOperationsInput | boolean
     isExpress?: BoolFieldUpdateOperationsInput | boolean
     isWeighted?: BoolFieldUpdateOperationsInput | boolean
+    scaleItemCode?: NullableStringFieldUpdateOperationsInput | string | null
+    shelfLifeDays?: IntFieldUpdateOperationsInput | number
+    scaleTareWeight?: FloatFieldUpdateOperationsInput | number
     inStock?: BoolFieldUpdateOperationsInput | boolean
     stockQty?: IntFieldUpdateOperationsInput | number
     minStockQty?: IntFieldUpdateOperationsInput | number
@@ -22411,6 +23965,9 @@ export namespace Prisma {
     isOffer?: boolean
     isExpress?: boolean
     isWeighted?: boolean
+    scaleItemCode?: string | null
+    shelfLifeDays?: number
+    scaleTareWeight?: number
     inStock?: boolean
     stockQty?: number
     minStockQty?: number
@@ -22435,6 +23992,9 @@ export namespace Prisma {
     isOffer?: BoolFieldUpdateOperationsInput | boolean
     isExpress?: BoolFieldUpdateOperationsInput | boolean
     isWeighted?: BoolFieldUpdateOperationsInput | boolean
+    scaleItemCode?: NullableStringFieldUpdateOperationsInput | string | null
+    shelfLifeDays?: IntFieldUpdateOperationsInput | number
+    scaleTareWeight?: FloatFieldUpdateOperationsInput | number
     inStock?: BoolFieldUpdateOperationsInput | boolean
     stockQty?: IntFieldUpdateOperationsInput | number
     minStockQty?: IntFieldUpdateOperationsInput | number
@@ -22459,6 +24019,9 @@ export namespace Prisma {
     isOffer?: BoolFieldUpdateOperationsInput | boolean
     isExpress?: BoolFieldUpdateOperationsInput | boolean
     isWeighted?: BoolFieldUpdateOperationsInput | boolean
+    scaleItemCode?: NullableStringFieldUpdateOperationsInput | string | null
+    shelfLifeDays?: IntFieldUpdateOperationsInput | number
+    scaleTareWeight?: FloatFieldUpdateOperationsInput | number
     inStock?: BoolFieldUpdateOperationsInput | boolean
     stockQty?: IntFieldUpdateOperationsInput | number
     minStockQty?: IntFieldUpdateOperationsInput | number
@@ -22491,6 +24054,7 @@ export namespace Prisma {
     captainPhone?: string | null
     assignedPicker?: string | null
     timeline?: string
+    isSettled?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -22517,6 +24081,7 @@ export namespace Prisma {
     captainPhone?: string | null
     assignedPicker?: string | null
     timeline?: string
+    isSettled?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -22543,6 +24108,7 @@ export namespace Prisma {
     captainPhone?: NullableStringFieldUpdateOperationsInput | string | null
     assignedPicker?: NullableStringFieldUpdateOperationsInput | string | null
     timeline?: StringFieldUpdateOperationsInput | string
+    isSettled?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22569,6 +24135,7 @@ export namespace Prisma {
     captainPhone?: NullableStringFieldUpdateOperationsInput | string | null
     assignedPicker?: NullableStringFieldUpdateOperationsInput | string | null
     timeline?: StringFieldUpdateOperationsInput | string
+    isSettled?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22595,6 +24162,7 @@ export namespace Prisma {
     captainPhone?: string | null
     assignedPicker?: string | null
     timeline?: string
+    isSettled?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -22621,6 +24189,7 @@ export namespace Prisma {
     captainPhone?: NullableStringFieldUpdateOperationsInput | string | null
     assignedPicker?: NullableStringFieldUpdateOperationsInput | string | null
     timeline?: StringFieldUpdateOperationsInput | string
+    isSettled?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22647,6 +24216,7 @@ export namespace Prisma {
     captainPhone?: NullableStringFieldUpdateOperationsInput | string | null
     assignedPicker?: NullableStringFieldUpdateOperationsInput | string | null
     timeline?: StringFieldUpdateOperationsInput | string
+    isSettled?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22741,6 +24311,7 @@ export namespace Prisma {
     phone: string
     vehicle?: string
     zone?: string
+    pendingBalance?: number
     isActive?: boolean
     createdAt?: Date | string
   }
@@ -22751,6 +24322,7 @@ export namespace Prisma {
     phone: string
     vehicle?: string
     zone?: string
+    pendingBalance?: number
     isActive?: boolean
     createdAt?: Date | string
   }
@@ -22761,6 +24333,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     vehicle?: StringFieldUpdateOperationsInput | string
     zone?: StringFieldUpdateOperationsInput | string
+    pendingBalance?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22771,6 +24344,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     vehicle?: StringFieldUpdateOperationsInput | string
     zone?: StringFieldUpdateOperationsInput | string
+    pendingBalance?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22781,6 +24355,7 @@ export namespace Prisma {
     phone: string
     vehicle?: string
     zone?: string
+    pendingBalance?: number
     isActive?: boolean
     createdAt?: Date | string
   }
@@ -22791,6 +24366,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     vehicle?: StringFieldUpdateOperationsInput | string
     zone?: StringFieldUpdateOperationsInput | string
+    pendingBalance?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22801,6 +24377,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     vehicle?: StringFieldUpdateOperationsInput | string
     zone?: StringFieldUpdateOperationsInput | string
+    pendingBalance?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22991,6 +24568,7 @@ export namespace Prisma {
     paidAmount?: number
     remainingAmount?: number
     paymentType?: string
+    status?: string
     notes?: string | null
     receivedBy?: string | null
     createdAt?: Date | string
@@ -23008,6 +24586,7 @@ export namespace Prisma {
     paidAmount?: number
     remainingAmount?: number
     paymentType?: string
+    status?: string
     notes?: string | null
     receivedBy?: string | null
     createdAt?: Date | string
@@ -23023,6 +24602,7 @@ export namespace Prisma {
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
     paymentType?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     receivedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23040,6 +24620,7 @@ export namespace Prisma {
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
     paymentType?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     receivedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23056,6 +24637,7 @@ export namespace Prisma {
     paidAmount?: number
     remainingAmount?: number
     paymentType?: string
+    status?: string
     notes?: string | null
     receivedBy?: string | null
     createdAt?: Date | string
@@ -23071,6 +24653,7 @@ export namespace Prisma {
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
     paymentType?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     receivedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23087,6 +24670,7 @@ export namespace Prisma {
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
     paymentType?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     receivedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23222,8 +24806,8 @@ export namespace Prisma {
     productId?: StringFieldUpdateOperationsInput | string
     productName?: StringFieldUpdateOperationsInput | string
     movementType?: StringFieldUpdateOperationsInput | string
-    quantity?: IntFieldUpdateOperationsInput | number
-    balanceAfter?: IntFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
     unitCost?: NullableFloatFieldUpdateOperationsInput | number | null
     reference?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23236,8 +24820,8 @@ export namespace Prisma {
     productId?: StringFieldUpdateOperationsInput | string
     productName?: StringFieldUpdateOperationsInput | string
     movementType?: StringFieldUpdateOperationsInput | string
-    quantity?: IntFieldUpdateOperationsInput | number
-    balanceAfter?: IntFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
     unitCost?: NullableFloatFieldUpdateOperationsInput | number | null
     reference?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23264,8 +24848,8 @@ export namespace Prisma {
     productId?: StringFieldUpdateOperationsInput | string
     productName?: StringFieldUpdateOperationsInput | string
     movementType?: StringFieldUpdateOperationsInput | string
-    quantity?: IntFieldUpdateOperationsInput | number
-    balanceAfter?: IntFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
     unitCost?: NullableFloatFieldUpdateOperationsInput | number | null
     reference?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23278,12 +24862,103 @@ export namespace Prisma {
     productId?: StringFieldUpdateOperationsInput | string
     productName?: StringFieldUpdateOperationsInput | string
     movementType?: StringFieldUpdateOperationsInput | string
-    quantity?: IntFieldUpdateOperationsInput | number
-    balanceAfter?: IntFieldUpdateOperationsInput | number
+    quantity?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
     unitCost?: NullableFloatFieldUpdateOperationsInput | number | null
     reference?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     performedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReturnRecordCreateInput = {
+    id?: string
+    returnNumber: string
+    type: string
+    referenceNumber: string
+    customerOrSupplier: string
+    items: string
+    totalAmount: number
+    reason?: string | null
+    recordedBy?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ReturnRecordUncheckedCreateInput = {
+    id?: string
+    returnNumber: string
+    type: string
+    referenceNumber: string
+    customerOrSupplier: string
+    items: string
+    totalAmount: number
+    reason?: string | null
+    recordedBy?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ReturnRecordUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    returnNumber?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    referenceNumber?: StringFieldUpdateOperationsInput | string
+    customerOrSupplier?: StringFieldUpdateOperationsInput | string
+    items?: StringFieldUpdateOperationsInput | string
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    recordedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReturnRecordUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    returnNumber?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    referenceNumber?: StringFieldUpdateOperationsInput | string
+    customerOrSupplier?: StringFieldUpdateOperationsInput | string
+    items?: StringFieldUpdateOperationsInput | string
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    recordedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReturnRecordCreateManyInput = {
+    id?: string
+    returnNumber: string
+    type: string
+    referenceNumber: string
+    customerOrSupplier: string
+    items: string
+    totalAmount: number
+    reason?: string | null
+    recordedBy?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ReturnRecordUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    returnNumber?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    referenceNumber?: StringFieldUpdateOperationsInput | string
+    customerOrSupplier?: StringFieldUpdateOperationsInput | string
+    items?: StringFieldUpdateOperationsInput | string
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    recordedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReturnRecordUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    returnNumber?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    referenceNumber?: StringFieldUpdateOperationsInput | string
+    customerOrSupplier?: StringFieldUpdateOperationsInput | string
+    items?: StringFieldUpdateOperationsInput | string
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    recordedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23464,11 +25139,16 @@ export namespace Prisma {
     hotlines?: string
     whatsapp?: string
     address?: string
+    taxNumber?: string
+    commercialReg?: string
     freeDeliveryThreshold?: number
     expressDeliveryEnabled?: boolean
     expressMinutes?: number
     isLockedDown?: boolean
     bannerNotice?: string | null
+    weightPrefixes?: string
+    pricePrefixes?: string
+    pluDigits?: number
     updatedAt?: Date | string
   }
 
@@ -23481,11 +25161,16 @@ export namespace Prisma {
     hotlines?: string
     whatsapp?: string
     address?: string
+    taxNumber?: string
+    commercialReg?: string
     freeDeliveryThreshold?: number
     expressDeliveryEnabled?: boolean
     expressMinutes?: number
     isLockedDown?: boolean
     bannerNotice?: string | null
+    weightPrefixes?: string
+    pricePrefixes?: string
+    pluDigits?: number
     updatedAt?: Date | string
   }
 
@@ -23498,11 +25183,16 @@ export namespace Prisma {
     hotlines?: StringFieldUpdateOperationsInput | string
     whatsapp?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
+    taxNumber?: StringFieldUpdateOperationsInput | string
+    commercialReg?: StringFieldUpdateOperationsInput | string
     freeDeliveryThreshold?: FloatFieldUpdateOperationsInput | number
     expressDeliveryEnabled?: BoolFieldUpdateOperationsInput | boolean
     expressMinutes?: IntFieldUpdateOperationsInput | number
     isLockedDown?: BoolFieldUpdateOperationsInput | boolean
     bannerNotice?: NullableStringFieldUpdateOperationsInput | string | null
+    weightPrefixes?: StringFieldUpdateOperationsInput | string
+    pricePrefixes?: StringFieldUpdateOperationsInput | string
+    pluDigits?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23515,11 +25205,16 @@ export namespace Prisma {
     hotlines?: StringFieldUpdateOperationsInput | string
     whatsapp?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
+    taxNumber?: StringFieldUpdateOperationsInput | string
+    commercialReg?: StringFieldUpdateOperationsInput | string
     freeDeliveryThreshold?: FloatFieldUpdateOperationsInput | number
     expressDeliveryEnabled?: BoolFieldUpdateOperationsInput | boolean
     expressMinutes?: IntFieldUpdateOperationsInput | number
     isLockedDown?: BoolFieldUpdateOperationsInput | boolean
     bannerNotice?: NullableStringFieldUpdateOperationsInput | string | null
+    weightPrefixes?: StringFieldUpdateOperationsInput | string
+    pricePrefixes?: StringFieldUpdateOperationsInput | string
+    pluDigits?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23532,11 +25227,16 @@ export namespace Prisma {
     hotlines?: string
     whatsapp?: string
     address?: string
+    taxNumber?: string
+    commercialReg?: string
     freeDeliveryThreshold?: number
     expressDeliveryEnabled?: boolean
     expressMinutes?: number
     isLockedDown?: boolean
     bannerNotice?: string | null
+    weightPrefixes?: string
+    pricePrefixes?: string
+    pluDigits?: number
     updatedAt?: Date | string
   }
 
@@ -23549,11 +25249,16 @@ export namespace Prisma {
     hotlines?: StringFieldUpdateOperationsInput | string
     whatsapp?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
+    taxNumber?: StringFieldUpdateOperationsInput | string
+    commercialReg?: StringFieldUpdateOperationsInput | string
     freeDeliveryThreshold?: FloatFieldUpdateOperationsInput | number
     expressDeliveryEnabled?: BoolFieldUpdateOperationsInput | boolean
     expressMinutes?: IntFieldUpdateOperationsInput | number
     isLockedDown?: BoolFieldUpdateOperationsInput | boolean
     bannerNotice?: NullableStringFieldUpdateOperationsInput | string | null
+    weightPrefixes?: StringFieldUpdateOperationsInput | string
+    pricePrefixes?: StringFieldUpdateOperationsInput | string
+    pluDigits?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23566,11 +25271,16 @@ export namespace Prisma {
     hotlines?: StringFieldUpdateOperationsInput | string
     whatsapp?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
+    taxNumber?: StringFieldUpdateOperationsInput | string
+    commercialReg?: StringFieldUpdateOperationsInput | string
     freeDeliveryThreshold?: FloatFieldUpdateOperationsInput | number
     expressDeliveryEnabled?: BoolFieldUpdateOperationsInput | boolean
     expressMinutes?: IntFieldUpdateOperationsInput | number
     isLockedDown?: BoolFieldUpdateOperationsInput | boolean
     bannerNotice?: NullableStringFieldUpdateOperationsInput | string | null
+    weightPrefixes?: StringFieldUpdateOperationsInput | string
+    pricePrefixes?: StringFieldUpdateOperationsInput | string
+    pluDigits?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23943,6 +25653,9 @@ export namespace Prisma {
     isOffer?: SortOrder
     isExpress?: SortOrder
     isWeighted?: SortOrder
+    scaleItemCode?: SortOrder
+    shelfLifeDays?: SortOrder
+    scaleTareWeight?: SortOrder
     inStock?: SortOrder
     stockQty?: SortOrder
     minStockQty?: SortOrder
@@ -23958,6 +25671,8 @@ export namespace Prisma {
     basePrice?: SortOrder
     originalPrice?: SortOrder
     discountPercent?: SortOrder
+    shelfLifeDays?: SortOrder
+    scaleTareWeight?: SortOrder
     stockQty?: SortOrder
     minStockQty?: SortOrder
     openingStock?: SortOrder
@@ -23978,6 +25693,9 @@ export namespace Prisma {
     isOffer?: SortOrder
     isExpress?: SortOrder
     isWeighted?: SortOrder
+    scaleItemCode?: SortOrder
+    shelfLifeDays?: SortOrder
+    scaleTareWeight?: SortOrder
     inStock?: SortOrder
     stockQty?: SortOrder
     minStockQty?: SortOrder
@@ -24002,6 +25720,9 @@ export namespace Prisma {
     isOffer?: SortOrder
     isExpress?: SortOrder
     isWeighted?: SortOrder
+    scaleItemCode?: SortOrder
+    shelfLifeDays?: SortOrder
+    scaleTareWeight?: SortOrder
     inStock?: SortOrder
     stockQty?: SortOrder
     minStockQty?: SortOrder
@@ -24017,6 +25738,8 @@ export namespace Prisma {
     basePrice?: SortOrder
     originalPrice?: SortOrder
     discountPercent?: SortOrder
+    shelfLifeDays?: SortOrder
+    scaleTareWeight?: SortOrder
     stockQty?: SortOrder
     minStockQty?: SortOrder
     openingStock?: SortOrder
@@ -24093,6 +25816,7 @@ export namespace Prisma {
     captainPhone?: SortOrder
     assignedPicker?: SortOrder
     timeline?: SortOrder
+    isSettled?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -24126,6 +25850,7 @@ export namespace Prisma {
     captainPhone?: SortOrder
     assignedPicker?: SortOrder
     timeline?: SortOrder
+    isSettled?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -24152,6 +25877,7 @@ export namespace Prisma {
     captainPhone?: SortOrder
     assignedPicker?: SortOrder
     timeline?: SortOrder
+    isSettled?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -24215,8 +25941,13 @@ export namespace Prisma {
     phone?: SortOrder
     vehicle?: SortOrder
     zone?: SortOrder
+    pendingBalance?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type CaptainAvgOrderByAggregateInput = {
+    pendingBalance?: SortOrder
   }
 
   export type CaptainMaxOrderByAggregateInput = {
@@ -24225,6 +25956,7 @@ export namespace Prisma {
     phone?: SortOrder
     vehicle?: SortOrder
     zone?: SortOrder
+    pendingBalance?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
   }
@@ -24235,8 +25967,13 @@ export namespace Prisma {
     phone?: SortOrder
     vehicle?: SortOrder
     zone?: SortOrder
+    pendingBalance?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type CaptainSumOrderByAggregateInput = {
+    pendingBalance?: SortOrder
   }
 
   export type DeliveryZoneCountOrderByAggregateInput = {
@@ -24369,6 +26106,7 @@ export namespace Prisma {
     paidAmount?: SortOrder
     remainingAmount?: SortOrder
     paymentType?: SortOrder
+    status?: SortOrder
     notes?: SortOrder
     receivedBy?: SortOrder
     createdAt?: SortOrder
@@ -24391,6 +26129,7 @@ export namespace Prisma {
     paidAmount?: SortOrder
     remainingAmount?: SortOrder
     paymentType?: SortOrder
+    status?: SortOrder
     notes?: SortOrder
     receivedBy?: SortOrder
     createdAt?: SortOrder
@@ -24407,6 +26146,7 @@ export namespace Prisma {
     paidAmount?: SortOrder
     remainingAmount?: SortOrder
     paymentType?: SortOrder
+    status?: SortOrder
     notes?: SortOrder
     receivedBy?: SortOrder
     createdAt?: SortOrder
@@ -24522,6 +26262,53 @@ export namespace Prisma {
     unitCost?: SortOrder
   }
 
+  export type ReturnRecordCountOrderByAggregateInput = {
+    id?: SortOrder
+    returnNumber?: SortOrder
+    type?: SortOrder
+    referenceNumber?: SortOrder
+    customerOrSupplier?: SortOrder
+    items?: SortOrder
+    totalAmount?: SortOrder
+    reason?: SortOrder
+    recordedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ReturnRecordAvgOrderByAggregateInput = {
+    totalAmount?: SortOrder
+  }
+
+  export type ReturnRecordMaxOrderByAggregateInput = {
+    id?: SortOrder
+    returnNumber?: SortOrder
+    type?: SortOrder
+    referenceNumber?: SortOrder
+    customerOrSupplier?: SortOrder
+    items?: SortOrder
+    totalAmount?: SortOrder
+    reason?: SortOrder
+    recordedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ReturnRecordMinOrderByAggregateInput = {
+    id?: SortOrder
+    returnNumber?: SortOrder
+    type?: SortOrder
+    referenceNumber?: SortOrder
+    customerOrSupplier?: SortOrder
+    items?: SortOrder
+    totalAmount?: SortOrder
+    reason?: SortOrder
+    recordedBy?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ReturnRecordSumOrderByAggregateInput = {
+    totalAmount?: SortOrder
+  }
+
   export type TreasuryTransactionCountOrderByAggregateInput = {
     id?: SortOrder
     type?: SortOrder
@@ -24613,17 +26400,23 @@ export namespace Prisma {
     hotlines?: SortOrder
     whatsapp?: SortOrder
     address?: SortOrder
+    taxNumber?: SortOrder
+    commercialReg?: SortOrder
     freeDeliveryThreshold?: SortOrder
     expressDeliveryEnabled?: SortOrder
     expressMinutes?: SortOrder
     isLockedDown?: SortOrder
     bannerNotice?: SortOrder
+    weightPrefixes?: SortOrder
+    pricePrefixes?: SortOrder
+    pluDigits?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type SystemSettingsAvgOrderByAggregateInput = {
     freeDeliveryThreshold?: SortOrder
     expressMinutes?: SortOrder
+    pluDigits?: SortOrder
   }
 
   export type SystemSettingsMaxOrderByAggregateInput = {
@@ -24635,11 +26428,16 @@ export namespace Prisma {
     hotlines?: SortOrder
     whatsapp?: SortOrder
     address?: SortOrder
+    taxNumber?: SortOrder
+    commercialReg?: SortOrder
     freeDeliveryThreshold?: SortOrder
     expressDeliveryEnabled?: SortOrder
     expressMinutes?: SortOrder
     isLockedDown?: SortOrder
     bannerNotice?: SortOrder
+    weightPrefixes?: SortOrder
+    pricePrefixes?: SortOrder
+    pluDigits?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -24652,17 +26450,23 @@ export namespace Prisma {
     hotlines?: SortOrder
     whatsapp?: SortOrder
     address?: SortOrder
+    taxNumber?: SortOrder
+    commercialReg?: SortOrder
     freeDeliveryThreshold?: SortOrder
     expressDeliveryEnabled?: SortOrder
     expressMinutes?: SortOrder
     isLockedDown?: SortOrder
     bannerNotice?: SortOrder
+    weightPrefixes?: SortOrder
+    pricePrefixes?: SortOrder
+    pluDigits?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type SystemSettingsSumOrderByAggregateInput = {
     freeDeliveryThreshold?: SortOrder
     expressMinutes?: SortOrder
+    pluDigits?: SortOrder
   }
 
   export type ExpenseCountOrderByAggregateInput = {
@@ -25081,6 +26885,7 @@ export namespace Prisma {
     paidAmount?: number
     remainingAmount?: number
     paymentType?: string
+    status?: string
     notes?: string | null
     receivedBy?: string | null
     createdAt?: Date | string
@@ -25096,6 +26901,7 @@ export namespace Prisma {
     paidAmount?: number
     remainingAmount?: number
     paymentType?: string
+    status?: string
     notes?: string | null
     receivedBy?: string | null
     createdAt?: Date | string
@@ -25177,6 +26983,7 @@ export namespace Prisma {
     paidAmount?: FloatFilter<"Purchase"> | number
     remainingAmount?: FloatFilter<"Purchase"> | number
     paymentType?: StringFilter<"Purchase"> | string
+    status?: StringFilter<"Purchase"> | string
     notes?: StringNullableFilter<"Purchase"> | string | null
     receivedBy?: StringNullableFilter<"Purchase"> | string | null
     createdAt?: DateTimeFilter<"Purchase"> | Date | string
@@ -25377,6 +27184,7 @@ export namespace Prisma {
     paidAmount?: number
     remainingAmount?: number
     paymentType?: string
+    status?: string
     notes?: string | null
     receivedBy?: string | null
     createdAt?: Date | string
@@ -25405,6 +27213,7 @@ export namespace Prisma {
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
     paymentType?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     receivedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25420,6 +27229,7 @@ export namespace Prisma {
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
     paymentType?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     receivedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25435,6 +27245,7 @@ export namespace Prisma {
     paidAmount?: FloatFieldUpdateOperationsInput | number
     remainingAmount?: FloatFieldUpdateOperationsInput | number
     paymentType?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     receivedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
