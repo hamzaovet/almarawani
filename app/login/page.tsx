@@ -13,6 +13,9 @@ import {
   ArrowRight,
   Bike,
   Crown,
+  Delete,
+  CheckCircle,
+  X,
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -24,9 +27,15 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // PIN Keypad Modal State
+  const [selectedStaff, setSelectedStaff] = useState<any | null>(null);
+  const [modalPin, setModalPin] = useState("");
+  const [pinError, setPinError] = useState("");
+
   const handleLogin = async (e?: React.FormEvent, customCreds?: any) => {
     if (e) e.preventDefault();
     setError("");
+    setPinError("");
 
     const payload = customCreds || (loginMode === "pin" ? { pin } : { identifier, password });
 
@@ -51,24 +60,101 @@ export default function LoginPage() {
           router.push("/dashboard");
         }
       } else {
-        setError(data.error || "بيانات الدخول غير صحيحة");
+        const errMsg = data.error || "بيانات الدخول أو كود الـ PIN غير صحيح";
+        if (selectedStaff) {
+          setPinError(errMsg);
+          setModalPin("");
+        } else {
+          setError(errMsg);
+        }
       }
     } catch {
-      setError("حدث خطأ في الاتصال بالخادم");
+      const errMsg = "حدث خطأ في الاتصال بالخادم";
+      if (selectedStaff) setPinError(errMsg);
+      else setError(errMsg);
     } finally {
       setLoading(false);
     }
   };
 
-  const quickLogin = (idVal: string, passVal: string, pinVal: string) => {
-    setIdentifier(idVal);
-    setPassword(passVal);
-    setPin(pinVal);
-    handleLogin(undefined, { identifier: idVal, password: passVal });
+  // When clicking a staff chip, open PIN modal
+  const openPinModal = (staff: { roleName: string; username: string; defaultPinHint: string; icon: string; color: string }) => {
+    setSelectedStaff(staff);
+    setModalPin("");
+    setPinError("");
   };
 
+  // Handle Numpad clicks
+  const handleNumpad = (digit: string) => {
+    if (modalPin.length < 6) {
+      const nextPin = modalPin + digit;
+      setModalPin(nextPin);
+      setPinError("");
+      if (nextPin.length === 6) {
+        // Auto-submit when 6 digits are reached
+        handleLogin(undefined, { identifier: selectedStaff.username, pin: nextPin });
+      }
+    }
+  };
+
+  const handleBackspace = () => {
+    setModalPin((prev) => prev.slice(0, -1));
+    setPinError("");
+  };
+
+  const staffChips = [
+    {
+      roleName: "المالك (المايسترو)",
+      username: "maestro",
+      defaultPinHint: "157230",
+      badge: "صلاحيات كاملة",
+      color: "border-amber-500 bg-amber-50 text-amber-900 hover:bg-amber-100",
+      icon: "👑",
+    },
+    {
+      roleName: "مدير الفرع",
+      username: "manager",
+      defaultPinHint: "123456",
+      badge: "إدارة وتشغيل",
+      color: "border-blue-500 bg-blue-50 text-blue-900 hover:bg-blue-100",
+      icon: "👔",
+    },
+    {
+      roleName: "كاشير صالة 1",
+      username: "cashier1",
+      defaultPinHint: "111111",
+      badge: "نقطة بيع POS",
+      color: "border-emerald-500 bg-emerald-50 text-emerald-900 hover:bg-emerald-100",
+      icon: "💳",
+    },
+    {
+      roleName: "كاشير صالة 2",
+      username: "cashier2",
+      defaultPinHint: "222222",
+      badge: "نقطة بيع POS",
+      color: "border-teal-500 bg-teal-50 text-teal-900 hover:bg-teal-100",
+      icon: "💳",
+    },
+    {
+      roleName: "كابتن طيار الدليفري",
+      username: "delivery",
+      defaultPinHint: "333333",
+      badge: "بوابة السائقين",
+      color: "border-red-500 bg-red-50 text-red-900 hover:bg-red-100",
+      icon: "🛵",
+    },
+    {
+      roleName: "مسؤول تجهيز الطلبات",
+      username: "picker",
+      defaultPinHint: "444444",
+      badge: "تجميع المنتجات",
+      color: "border-purple-500 bg-purple-50 text-purple-900 hover:bg-purple-100",
+      icon: "📦",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#002d62] via-[#004f9f] to-[#001c3d] text-white flex flex-col justify-between p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#002d62] via-[#004f9f] to-[#001c3d] text-white flex flex-col justify-between p-4 font-['Cairo',sans-serif]">
       {/* Top Bar */}
       <div className="max-w-md mx-auto w-full pt-4 flex justify-between items-center text-xs">
         <Link
@@ -117,7 +203,7 @@ export default function LoginPage() {
                 : "text-slate-500"
             }`}
           >
-            كود الـ PIN السريع
+            كود الـ PIN المباشر
           </button>
         </div>
 
@@ -141,7 +227,7 @@ export default function LoginPage() {
                     required
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="مثال: maestro أو manager"
+                    placeholder="مثال: maestro أو manager أو رقم الهاتف"
                     className="w-full h-11 pr-10 pl-3 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#004f9f] outline-none font-bold"
                   />
                   <User className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5" />
@@ -168,7 +254,7 @@ export default function LoginPage() {
           ) : (
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
-                كود الـ PIN المكون من 6 أرقام:
+                كود الـ PIN السريع (مكون من 6 أرقام):
               </label>
               <div className="relative">
                 <input
@@ -177,7 +263,7 @@ export default function LoginPage() {
                   required
                   value={pin}
                   onChange={(e) => setPin(e.target.value)}
-                  placeholder="مثال: 157230"
+                  placeholder="••••••"
                   className="w-full h-12 text-center tracking-widest text-lg font-black bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-[#004f9f] outline-none"
                 />
                 <KeyRound className="w-4 h-4 text-slate-400 absolute right-3.5 top-4" />
@@ -188,71 +274,171 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-[#004f9f] hover:bg-[#003875] text-white rounded-xl font-black text-sm shadow-md transition-all"
+            className="w-full py-3 bg-[#004f9f] hover:bg-[#003875] text-white rounded-xl font-black text-sm shadow-md transition-all active:scale-[0.99]"
           >
             {loading ? "جاري التحقق والدخول..." : "تسجيل الدخول"}
           </button>
         </form>
 
-        {/* Quick Demo Accounts Chips */}
-        <div className="pt-4 border-t border-slate-100 space-y-2">
-          <span className="text-[11px] font-extrabold text-slate-400 block text-center">
-            حسابات النظام التجريبية (اضغط للدخول فوراً):
-          </span>
-          <div className="grid grid-cols-2 gap-1.5">
-            <button
-              onClick={() => quickLogin("maestro", "123456789", "157230")}
-              className="p-2 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 text-[11px] font-extrabold text-right flex items-center justify-between"
-            >
-              <span>👑 المالك (المايسترو)</span>
-              <span className="text-[9px] text-amber-700">123456789</span>
-            </button>
-
-            <button
-              onClick={() => quickLogin("manager", "123456", "123456")}
-              className="p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-[11px] font-bold text-right flex items-center justify-between"
-            >
-              <span>👔 المدير</span>
-              <span className="text-[9px] text-slate-400">123456</span>
-            </button>
-
-            <button
-              onClick={() => quickLogin("cashier1", "123456", "111111")}
-              className="p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-[11px] font-bold text-right flex items-center justify-between"
-            >
-              <span>🖥️ كاشير 1</span>
-              <span className="text-[9px] text-slate-400">123456</span>
-            </button>
-
-            <button
-              onClick={() => quickLogin("cashier2", "123456", "222222")}
-              className="p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-[11px] font-bold text-right flex items-center justify-between"
-            >
-              <span>🖥️ كاشير 2</span>
-              <span className="text-[9px] text-slate-400">123456</span>
-            </button>
-
-            <button
-              onClick={() => quickLogin("delivery", "123456", "333333")}
-              className="p-2 rounded-xl border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 text-[11px] font-extrabold text-right flex items-center justify-between"
-            >
-              <span>🛵 طيار دليفري</span>
-              <span className="text-[9px] text-emerald-700">123456</span>
-            </button>
-
-            <button
-              onClick={() => quickLogin("picker", "123456", "444444")}
-              className="p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 text-[11px] font-bold text-right flex items-center justify-between"
-            >
-              <span>📦 مجمع طلبات</span>
-              <span className="text-[9px] text-slate-400">123456</span>
-            </button>
+        {/* Staff Quick Selection (Protected by PIN Pad) */}
+        <div className="pt-4 border-t border-slate-100 space-y-2.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-extrabold text-slate-500">
+              تسجيل دخول سريع للموظفين (مؤمن بالـ PIN):
+            </span>
+            <span className="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-full">
+              محمي بنظام ATM
+            </span>
           </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            {staffChips.map((s, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => openPinModal(s)}
+                className={`p-2.5 rounded-xl border text-right transition-all flex items-center justify-between gap-1.5 active:scale-95 shadow-2xs ${s.color}`}
+              >
+                <div className="min-w-0">
+                  <div className="font-bold text-xs truncate flex items-center gap-1">
+                    <span>{s.icon}</span>
+                    <span>{s.roleName}</span>
+                  </div>
+                  <div className="text-[10px] opacity-75 font-semibold">
+                    {s.username} • {s.badge}
+                  </div>
+                </div>
+                <KeyRound className="w-3.5 h-3.5 opacity-60 shrink-0" />
+              </button>
+            ))}
+          </div>
+
+          <p className="text-[10px] text-center text-slate-400 pt-1">
+            * اضغط على أي حساب وسيطلب منك إدخال كود الـ PIN المخصص له للدخول
+          </p>
         </div>
       </div>
 
-      <div className="text-center text-xs text-blue-200 pb-2">
-        نظام سوبرماركت المرواني لإدارة نقاط البيع والتوصيل السحابي
+      {/* Secure PIN Keypad Modal (ATM/POS Style) */}
+      {selectedStaff && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white text-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl border-2 border-[#004f9f] space-y-5 animate-in fade-in zoom-in-95">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b pb-3 border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">{selectedStaff.icon}</span>
+                <div>
+                  <h3 className="font-black text-sm text-slate-900">
+                    {selectedStaff.roleName}
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    حساب: <span className="font-bold text-[#004f9f]">{selectedStaff.username}</span>
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedStaff(null)}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Instruction */}
+            <div className="text-center space-y-1">
+              <div className="w-10 h-10 rounded-full bg-blue-50 text-[#004f9f] flex items-center justify-center mx-auto mb-2">
+                <Lock className="w-5 h-5" />
+              </div>
+              <p className="text-xs font-bold text-slate-700">
+                أدخل كود الـ PIN السري المكون من 6 أرقام:
+              </p>
+              <p className="text-[10px] text-slate-400">
+                (الكود الافتراضي: <span className="font-mono font-bold text-blue-600">{selectedStaff.defaultPinHint}</span>)
+              </p>
+            </div>
+
+            {/* 6 Digit Circles Display */}
+            <div className="flex justify-center gap-3 py-2">
+              {[0, 1, 2, 3, 4, 5].map((idx) => {
+                const filled = modalPin.length > idx;
+                return (
+                  <div
+                    key={idx}
+                    className={`w-4 h-4 rounded-full border-2 transition-all ${
+                      filled
+                        ? "bg-[#004f9f] border-[#004f9f] scale-110 shadow-xs"
+                        : "border-slate-300 bg-slate-100"
+                    }`}
+                  />
+                );
+              })}
+            </div>
+
+            {pinError && (
+              <div className="p-2.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs text-center font-bold">
+                {pinError}
+              </div>
+            )}
+
+            {/* Touchscreen Numpad Grid */}
+            <div className="grid grid-cols-3 gap-2 pt-1">
+              {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((num) => (
+                <button
+                  key={num}
+                  type="button"
+                  onClick={() => handleNumpad(num)}
+                  disabled={loading}
+                  className="h-13 rounded-2xl bg-slate-50 hover:bg-blue-50 hover:border-blue-300 border border-slate-200 text-lg font-black text-slate-800 transition-all active:scale-95 shadow-2xs"
+                >
+                  {num}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setModalPin("")}
+                disabled={loading || modalPin.length === 0}
+                className="h-13 rounded-2xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-slate-600 transition-all active:scale-95"
+              >
+                مسح
+              </button>
+              <button
+                type="button"
+                onClick={() => handleNumpad("0")}
+                disabled={loading}
+                className="h-13 rounded-2xl bg-slate-50 hover:bg-blue-50 hover:border-blue-300 border border-slate-200 text-lg font-black text-slate-800 transition-all active:scale-95 shadow-2xs"
+              >
+                0
+              </button>
+              <button
+                type="button"
+                onClick={handleBackspace}
+                disabled={loading || modalPin.length === 0}
+                className="h-13 rounded-2xl bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 flex items-center justify-center transition-all active:scale-95"
+              >
+                <Delete className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Submit button if entered via keyboard */}
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() =>
+                  handleLogin(undefined, { identifier: selectedStaff.username, pin: modalPin })
+                }
+                disabled={loading || modalPin.length === 0}
+                className="w-full py-2.5 rounded-xl bg-[#004f9f] hover:bg-[#003875] text-white text-xs font-bold shadow transition-all disabled:opacity-50"
+              >
+                {loading ? "جاري التحقق والدخول..." : "تأكيد الدخول"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Footer */}
+      <div className="text-center text-[11px] text-blue-200/80 py-2">
+        نظام سوبرماركت المرواني السحابي © 2026 • فرع المعادي — مدعوم بأحدث تقنيات أوركا
       </div>
     </div>
   );

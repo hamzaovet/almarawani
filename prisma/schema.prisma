@@ -50,6 +50,7 @@ model Product {
   category        String
   unit            String   @default("1 كجم") // 1 كجم، 500 جم، 1 لتر، علبة، كرتونة
   barcode         String?  // EAN-13
+  costPrice       Float    @default(0) // سعر الشراء / التكلفة
   basePrice       Float    // سعر البيع الحالي
   originalPrice   Float?   // السعر الأصلي المشطوب (e.g. 50 EGP)
   discountPercent Int?     // نسبة الخصم (e.g. 20%)
@@ -58,6 +59,8 @@ model Product {
   isWeighted      Boolean  @default(false) // صنف وزني بالميزان
   inStock         Boolean  @default(true)
   stockQty        Int      @default(150)
+  minStockQty     Int      @default(15) // حد الطلب / النواقص
+  openingStock    Int      @default(150) // رصيد أول المدة
   image           String?
   description     String?
   sortOrder       Int      @default(0)
@@ -69,7 +72,7 @@ model Order {
   orderNumber    String   @unique // MRW-1001
   customerName   String
   phone          String
-  address        String   // العنوان بالتفصيل: شارع، عمارة، شقة، علامة مميزة
+  address        String   // العنوان بالتفصيل
   zone           String   @default("المعادي - دجلة")
   branchName     String   @default("فرع المعادي")
   orderType      String   @default("delivery") // delivery, pickup, pos
@@ -82,21 +85,24 @@ model Order {
   paymentMethod  String   @default("cash") // cash, visa_on_delivery, instapay
   notes          String?
   captainId      String?
-  captainName    String?  // اسم الطيار
-  captainPhone   String?  // هاتف الطيار
-  assignedPicker String?  // مسؤول تجميع الطلب
+  captainName    String?
+  captainPhone   String?
+  assignedPicker String?
   timeline       String   @default("[]") // JSON: [{stage, at, by}]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
 
 model Customer {
-  id        String   @id @default(cuid())
-  name      String
-  phone     String   @unique
-  address   String?
-  zone      String?
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  name        String
+  phone       String   @unique
+  address     String?
+  zone        String?
+  totalOrders Int      @default(0)
+  totalSpend  Float    @default(0)
+  notes       String?
+  createdAt   DateTime @default(now())
 }
 
 model Captain {
@@ -111,19 +117,93 @@ model Captain {
 
 model DeliveryZone {
   id          String   @id @default(cuid())
-  nameAr      String   @unique // e.g. "المعادي القديمة ودجلة"
-  fee         Float    // رسوم التوصيل
+  nameAr      String   @unique
+  fee         Float
   timeMinutes Int      @default(45)
   minOrder    Float    @default(100)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
 }
 
+model Supplier {
+  id             String            @id @default(cuid())
+  name           String            // اسم المورد أو الشركة
+  contactPerson  String?           // اسم المندوب
+  phone          String            @unique
+  address        String?           // العنوان
+  category       String?           // التخصص (ألبان، خضار، بقالة، دواجن، منظفات...)
+  openingBalance Float             @default(0) // رصيد أول المدة
+  currentBalance Float             @default(0) // المستحق للمورد حالياً
+  isActive       Boolean           @default(true)
+  notes          String?
+  createdAt      DateTime          @default(now())
+  purchases      Purchase[]
+  payments       SupplierPayment[]
+}
+
+model Purchase {
+  id              String            @id @default(cuid())
+  invoiceNumber   String            @unique // PUR-1001
+  supplierId      String
+  supplierName    String
+  supplier        Supplier          @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  invoiceDate     String            // YYYY-MM-DD
+  items           String            // JSON: [{productId, nameAr, unit, qty, costPrice, total}]
+  totalAmount     Float
+  paidAmount      Float             @default(0)
+  remainingAmount Float             @default(0)
+  paymentType     String            @default("cash") // cash, credit, partial
+  notes           String?
+  receivedBy      String?
+  createdAt       DateTime          @default(now())
+}
+
+model SupplierPayment {
+  id            String   @id @default(cuid())
+  paymentNumber String   @unique // PAY-1001
+  supplierId    String
+  supplierName  String
+  supplier      Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  amount        Float
+  paymentDate   String   // YYYY-MM-DD
+  paymentMethod String   @default("cash") // cash, bank_transfer, instapay, cheque
+  treasury      String   @default("الخزينة الرئيسية")
+  notes         String?
+  recordedBy    String?
+  createdAt     DateTime @default(now())
+}
+
+model StockMovement {
+  id           String   @id @default(cuid())
+  productId    String
+  productName  String
+  movementType String   // opening, purchase, sale, adjustment, return
+  quantity     Int      // + or -
+  balanceAfter Int
+  unitCost     Float?
+  reference    String?  // e.g. PUR-1001, MRW-1042, ADJ-01
+  notes        String?
+  performedBy  String?
+  createdAt    DateTime @default(now())
+}
+
+model TreasuryTransaction {
+  id           String   @id @default(cuid())
+  type         String   // in, out
+  category     String   // مبيعات كاشير، مبيعات دليفري، سداد مورد، مصروف تشغيلي، رصيد افتتاح
+  amount       Float
+  balanceAfter Float    @default(0)
+  description  String
+  reference    String?
+  recordedBy   String?
+  createdAt    DateTime @default(now())
+}
+
 model ChatMessage {
   id            String   @id @default(cuid())
   senderId      String?
   senderName    String
-  senderRole    String?  // customer, support, staff
+  senderRole    String?
   text          String
   orderNumber   String?
   customerPhone String?
