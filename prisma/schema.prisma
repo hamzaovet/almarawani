@@ -1,0 +1,159 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/client"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  username     String?  @unique
+  passwordHash String?
+  phone        String   @unique
+  pin          String   @default("123456")
+  role         String   @default("cashier") // owner, manager, cashier, delivery, staff
+  avatar       String?
+  branch       String   @default("المعادي")
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+}
+
+model Branch {
+  id             String   @id @default(cuid())
+  code           String   @unique // e.g. "MAADI"
+  name           String   // فرع المعادي
+  address        String   // شارع النصر، دجلة، المعادي - القاهرة
+  phone          String   @default("01009988771")
+  isOpen         Boolean  @default(true)
+  deliveryActive Boolean  @default(true)
+  createdAt      DateTime @default(now())
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  nameAr    String   @unique
+  nameEn    String?
+  icon      String?  // Emoji or Lucide icon name
+  image     String?
+  badge     String?  // "عروض حصرية", "طازج يومياً", "وفر أكثر"
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id              String   @id @default(cuid())
+  nameAr          String
+  brand           String?  // جهينة، عبور لاند، الأهرام، كريستال، فيري...
+  category        String
+  unit            String   @default("1 كجم") // 1 كجم، 500 جم، 1 لتر، علبة، كرتونة
+  barcode         String?  // EAN-13
+  basePrice       Float    // سعر البيع الحالي
+  originalPrice   Float?   // السعر الأصلي المشطوب (e.g. 50 EGP)
+  discountPercent Int?     // نسبة الخصم (e.g. 20%)
+  isOffer         Boolean  @default(false)
+  isExpress       Boolean  @default(true) // متاح في المرواني ناو (توصيل 60 دقيقة)
+  isWeighted      Boolean  @default(false) // صنف وزني بالميزان
+  inStock         Boolean  @default(true)
+  stockQty        Int      @default(150)
+  image           String?
+  description     String?
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+}
+
+model Order {
+  id             String   @id @default(cuid())
+  orderNumber    String   @unique // MRW-1001
+  customerName   String
+  phone          String
+  address        String   // العنوان بالتفصيل: شارع، عمارة، شقة، علامة مميزة
+  zone           String   @default("المعادي - دجلة")
+  branchName     String   @default("فرع المعادي")
+  orderType      String   @default("delivery") // delivery, pickup, pos
+  status         String   @default("new") // new, preparing, ready, out_for_delivery, delivered, cancelled
+  items          String   // JSON: [{productId, nameAr, brand, unit, qty, unitPrice, total}]
+  subtotal       Float
+  deliveryFee    Float    @default(15)
+  discount       Float    @default(0)
+  total          Float
+  paymentMethod  String   @default("cash") // cash, visa_on_delivery, instapay
+  notes          String?
+  captainId      String?
+  captainName    String?  // اسم الطيار
+  captainPhone   String?  // هاتف الطيار
+  assignedPicker String?  // مسؤول تجميع الطلب
+  timeline       String   @default("[]") // JSON: [{stage, at, by}]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String   @unique
+  address   String?
+  zone      String?
+  createdAt DateTime @default(now())
+}
+
+model Captain {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String   @unique
+  vehicle   String   @default("سكوتر المرواني السريع")
+  zone      String   @default("المعادي")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model DeliveryZone {
+  id          String   @id @default(cuid())
+  nameAr      String   @unique // e.g. "المعادي القديمة ودجلة"
+  fee         Float    // رسوم التوصيل
+  timeMinutes Int      @default(45)
+  minOrder    Float    @default(100)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model ChatMessage {
+  id            String   @id @default(cuid())
+  senderId      String?
+  senderName    String
+  senderRole    String?  // customer, support, staff
+  text          String
+  orderNumber   String?
+  customerPhone String?
+  isStaff       Boolean  @default(false)
+  createdAt     DateTime @default(now())
+}
+
+model SystemSettings {
+  id                     String   @id @default("default")
+  storeName              String   @default("سوبرماركت المرواني")
+  tagline                String   @default("سلسلة سوبرماركت المرواني — أسعار الجملة وجودة الطازج")
+  mainBranch             String   @default("فرع المعادي (شارع النصر / دجلة)")
+  phone                  String   @default("01009988771")
+  hotlines               String   @default("01009988771 | 01122334455 | 01234567890")
+  whatsapp               String   @default("01009988771")
+  address                String   @default("شارع النصر، دجلة، المعادي - القاهرة")
+  freeDeliveryThreshold  Float    @default(400)
+  expressDeliveryEnabled Boolean  @default(true)
+  expressMinutes         Int      @default(60)
+  isLockedDown           Boolean  @default(false)
+  bannerNotice           String?  @default("⚡ التوصيل السريع بفرع المعادي شغال الآن خلال 60 دقيقة — خدمة التوصيل متوفرة يومياً من 8 صباحاً حتى 2 صباحاً")
+  updatedAt              DateTime @updatedAt
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  description String
+  amount      Float
+  expenseDate String   // YYYY-MM-DD
+  category    String   @default("تشغيل")
+  recordedBy  String?
+  createdAt   DateTime @default(now())
+}

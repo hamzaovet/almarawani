@@ -1,0 +1,18 @@
+{
+  "name": "سوبرماركت المرواني",
+  "short_name": "المرواني",
+  "description": "سلسلة سوبرماركت المرواني — تسوق البقالة والطازج بأسعار الجملة وتوصيل 60 دقيقة بالمعادي",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#002d62",
+  "theme_color": "#004f9f",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
